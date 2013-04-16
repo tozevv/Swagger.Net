@@ -16,6 +16,10 @@ namespace Swagger.Net
         /// </summary>
         public static bool LowercaseRoutes { get; set; }
 
+        /// <summary>
+        /// If true route paramters after "?" will be ignored, since they are not properly supported by SwaggerUI
+        /// </summary>
+        public static bool IgnoreRouteQueryParameters { get; set; }
 
         public const string SWAGGER = "swagger";
         public const string SWAGGER_VERSION = "2.0";
@@ -24,6 +28,23 @@ namespace Swagger.Net
         public const string QUERY = "query";
         public const string PATH = "path";
         public const string BODY = "body";
+
+        public static string CreatePath(string path) 
+        {
+            if (path != null)
+            {
+                if (LowercaseRoutes)
+                {
+                    path = path.ToLower();
+                }
+                if (IgnoreRouteQueryParameters)
+                {
+                    int splitIndex = path.IndexOf('?');
+                    if (splitIndex > -1) path = path.Substring(0, splitIndex);
+                }
+            }
+            return path;
+        }
 
         /// <summary>
         /// Create a resource listing
@@ -56,10 +77,7 @@ namespace Swagger.Net
 
             if (includeResourcePath)
             {
-                rl.resourcePath = controllerContext.ControllerDescriptor.ControllerName;
-                if (LowercaseRoutes && rl.resourcePath != null) {
-                    rl.resourcePath = rl.resourcePath.ToLower();
-                }
+                rl.resourcePath = CreatePath(controllerContext.ControllerDescriptor.ControllerName);
             }
             return rl;
         }
@@ -77,11 +95,11 @@ namespace Swagger.Net
                 description = api.Documentation,
                 operations = new List<ResourceApiOperation>()
             };
-            if (LowercaseRoutes && rApi.path != null) 
-            {
-                rApi.path = rApi.path.ToLower();
-            }
+
+            rApi.path = CreatePath(rApi.path);
             return rApi;
+
+          
         }
 
         /// <summary>
@@ -117,7 +135,7 @@ namespace Swagger.Net
             string paramType = (param.Source.ToString().Equals(FROMURI)) ? QUERY : BODY;
             ResourceApiOperationParameter parameter = new ResourceApiOperationParameter()
             {
-                paramType = (paramType == "query" && api.RelativePath.IndexOf("{" + param.Name + "}") > -1) ? PATH : paramType,
+                paramType = (paramType == "query" && CreatePath(api.RelativePath).IndexOf("{" + param.Name + "}") > -1) ? PATH : paramType,
                 name = param.Name,
                 description = param.Documentation,
                 dataType = param.ParameterDescriptor.ParameterType.Name,
