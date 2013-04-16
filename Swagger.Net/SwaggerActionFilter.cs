@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using Swagger.Net;
+using System.Collections.Generic;
 
 namespace Swagger.Net
 {
@@ -36,6 +38,24 @@ namespace Swagger.Net
             actionContext.Response = response;
         }
 
+        private bool DescriptionAuthorized(HttpActionContext actionContext, HttpActionDescriptor actionDescriptor) 
+        {
+     
+            var attributes = actionDescriptor.GetCustomAttributes<Attribute>()
+                 .ToArray();
+
+            IEnumerable<ISwaggerAuthorization> swaggerAuthorization =
+                attributes == null ? new List<ISwaggerAuthorization>() :
+                                    attributes.Where(c => c as ISwaggerAuthorization != null).Cast<ISwaggerAuthorization>().ToList();
+
+            foreach (var auth in swaggerAuthorization) {
+                if (!auth.IsDescriptionAuthorized(actionContext)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private ResourceListing getDocs(HttpActionContext actionContext)
         {
             var docProvider = (XmlCommentDocumentationProvider)GlobalConfiguration.Configuration.Services.GetDocumentationProvider();
@@ -53,16 +73,19 @@ namespace Swagger.Net
                 if (!apiControllerName.Equals(actionContext.ControllerContext.ControllerDescriptor.ControllerName))
                     continue;
 
-                ResourceApi rApi = SwaggerGen.CreateResourceApi(api);
-                r.apis.Add(rApi);
 
-                ResourceApiOperation rApiOperation = SwaggerGen.CreateResourceApiOperation(api, docProvider);
-                rApi.operations.Add(rApiOperation);
+                if (DescriptionAuthorized(actionContext, api.ActionDescriptor)) {
+                    ResourceApi rApi = SwaggerGen.CreateResourceApi(api);
+                    r.apis.Add(rApi);
 
-                foreach (var param in api.ParameterDescriptions)
-                {
-                    ResourceApiOperationParameter parameter = SwaggerGen.CreateResourceApiOperationParameter(api, param, docProvider);
-                    rApiOperation.parameters.Add(parameter);
+                    ResourceApiOperation rApiOperation = SwaggerGen.CreateResourceApiOperation(api, docProvider);
+                    rApi.operations.Add(rApiOperation);
+
+                    foreach (var param in api.ParameterDescriptions)
+                    {
+                        ResourceApiOperationParameter parameter = SwaggerGen.CreateResourceApiOperationParameter(api, param, docProvider);
+                        rApiOperation.parameters.Add(parameter);
+                    }
                 }
             }
             
