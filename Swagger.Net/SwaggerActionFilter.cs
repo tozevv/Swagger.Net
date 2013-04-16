@@ -15,12 +15,6 @@ namespace Swagger.Net
     /// </summary>
     public class SwaggerActionFilter : ActionFilterAttribute
     {
-
-        /// <summary>
-        /// If true routes will be lowercased
-        /// </summary>
-        public bool LowercaseRoutes { get; set; }
-
         /// <summary>
         /// Executes each request to give either a JSON Swagger spec doc or passes through the request
         /// </summary>

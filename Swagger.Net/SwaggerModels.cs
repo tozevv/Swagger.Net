@@ -10,6 +10,13 @@ namespace Swagger.Net
 {
     public static class SwaggerGen
     {
+
+        /// <summary>
+        /// If true routes will be lowercased
+        /// </summary>
+        public static bool LowercaseRoutes { get; set; }
+
+
         public const string SWAGGER = "swagger";
         public const string SWAGGER_VERSION = "2.0";
         public const string FROMURI = "FromUri";
@@ -47,8 +54,13 @@ namespace Swagger.Net
                 apis = new List<ResourceApi>()
             };
 
-            if (includeResourcePath) rl.resourcePath = controllerContext.ControllerDescriptor.ControllerName;
-
+            if (includeResourcePath)
+            {
+                rl.resourcePath = controllerContext.ControllerDescriptor.ControllerName;
+                if (LowercaseRoutes && rl.resourcePath != null) {
+                    rl.resourcePath = rl.resourcePath.ToLower();
+                }
+            }
             return rl;
         }
 
@@ -65,7 +77,10 @@ namespace Swagger.Net
                 description = api.Documentation,
                 operations = new List<ResourceApiOperation>()
             };
-
+            if (LowercaseRoutes && rApi.path != null) 
+            {
+                rApi.path = rApi.path.ToLower();
+            }
             return rApi;
         }
 
