@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -86,29 +87,44 @@ namespace Swagger.Net
             return "No Documentation Found.";
         }
 
-        public virtual string GetResponseClass(HttpActionDescriptor actionDescriptor)
+        public virtual ResponseType GetResponseType(HttpActionDescriptor actionDescriptor)
         {
             ReflectedHttpActionDescriptor reflectedActionDescriptor = actionDescriptor as ReflectedHttpActionDescriptor;
             if (reflectedActionDescriptor != null)
             {
-                if (reflectedActionDescriptor.MethodInfo.ReturnType.IsGenericType)
+                Type returnType = reflectedActionDescriptor.MethodInfo.ReturnType;
+                if (returnType.IsGenericType)
                 {
-                    StringBuilder sb = new StringBuilder(reflectedActionDescriptor.MethodInfo.ReturnParameter.ParameterType.Name);
+                    StringBuilder sb =
+                        new StringBuilder(reflectedActionDescriptor.MethodInfo.ReturnParameter.ParameterType.Name);
                     sb.Append("<");
-                    Type[] types = reflectedActionDescriptor.MethodInfo.ReturnParameter.ParameterType.GetGenericArguments();
-                    for(int i = 0; i < types.Length; i++)
+                    Type[] types =
+                        reflectedActionDescriptor.MethodInfo.ReturnParameter.ParameterType.GetGenericArguments();
+                    for (int i = 0; i < types.Length; i++)
                     {
                         sb.Append(types[i].Name);
-                        if(i != (types.Length - 1)) sb.Append(", ");
+                        if (i != (types.Length - 1)) sb.Append(", ");
                     }
                     sb.Append(">");
-                    return sb.Replace("`1","").ToString();
+                    return new ResponseType()
+                        {
+                            Name = sb.Replace("`1", "").ToString(),
+                            Type = returnType
+
+                        };
                 }
                 else
-                    return reflectedActionDescriptor.MethodInfo.ReturnType.Name;
+                {
+                    return new ResponseType()
+                        {
+                            Name = returnType.Name,
+                            Type = returnType
+                        };
+
+                }
             }
 
-            return "void";
+            return null;
         }
 
         public virtual string GetNickname(HttpActionDescriptor actionDescriptor)
@@ -161,5 +177,44 @@ namespace Swagger.Net
             }
             return typeName;
         }
+
+        public List<ResponseMessage> GetResponseCodes(HttpActionDescriptor actionDescriptor)
+        {
+            XPathNavigator memberNode = GetMemberNode(actionDescriptor);
+            if (memberNode != null)
+            {
+                XPathNavigator responsesNode = memberNode.SelectSingleNode("responseCodes");
+                if (responsesNode != null)
+                {
+                    var responses = responsesNode.SelectChildren("response", string.Empty);
+                    if (responses.Count > 0)
+                    {
+                        var responseList = new List<ResponseMessage>();
+                        while (responses.MoveNext())
+                        {
+                            var response = responses.Current;
+                            int code;
+                            Int32.TryParse(response.SelectSingleNode("code").Value, out code);
+                            var responseMessage = new ResponseMessage()
+                                {
+                                    code = code,
+                                    message = response.SelectSingleNode("message").Value
+                                };
+
+                            responseList.Add(responseMessage);
+                        }
+                        return responseList;
+                    }
+                }
+
+            }
+            return null;
+        }
+    }
+
+    public class ResponseType
+    {
+        public string Name { get; set; }
+        public Type Type { get; set; }
     }
 }

@@ -12,7 +12,14 @@ namespace Swagger.Net.WebApi.Controllers
         /// <summary>
         /// Get all of the Tags
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Nothing</returns>
+        /// <responseCodes> 
+        ///     <response>
+        ///         <code>500</code>
+        ///         <message>Internal server errors</message>
+        ///     </response>
+        /// </responseCodes>
+        /// <remarks>Notes</remarks>
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
@@ -21,11 +28,22 @@ namespace Swagger.Net.WebApi.Controllers
         /// <summary>
         /// Get a single Tag by it's id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public string Get(int id)
+        /// <param name="id">The id.</param>
+        /// <returns>
+        /// dfsdfsdf
+        /// </returns>
+        /// <responseCodes>
+        ///   <response>
+        ///   <code>500</code>
+        ///   <message>Internal server errors</message>
+        ///   </response>
+        ///   </responseCodes>
+        /// <remarks>
+        /// Notes
+        /// </remarks>
+        public Tag GetById(int id)
         {
-            return "value";
+            return new Tag();
         }
 
         /// <summary>
@@ -52,5 +70,25 @@ namespace Swagger.Net.WebApi.Controllers
         public void Delete(int id)
         {
         }
+    }
+
+    public class Tag
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public int Value { get; set; }
+        public TagType Type { get; set; }
+        public Rating Rating { get; set; }
+    }
+
+    public class Rating
+    {
+        public string Name { get; set; }
+        public DateTime CreateDate { get; set; }
+    }
+
+    public enum TagType
+    {
+        Normal, Complext
     }
 }
