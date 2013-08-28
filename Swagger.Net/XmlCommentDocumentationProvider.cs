@@ -210,6 +210,18 @@ namespace Swagger.Net
             }
             return null;
         }
+
+        public string[] GetPossibleValues(HttpParameterDescriptor parameterDescriptor)
+        {
+           
+            if (!parameterDescriptor.ParameterType.IsEnum)
+            {
+                return null;
+            }
+
+            return parameterDescriptor.ParameterType.GetEnumNames();
+            
+        }
     }
 
     public class ResponseType

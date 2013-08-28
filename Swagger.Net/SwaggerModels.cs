@@ -196,7 +196,8 @@ namespace Swagger.Net
                 name = param.Name,
                 description = param.Documentation,
                 dataType = param.ParameterDescriptor.ParameterType.Name,
-                required = docProvider.GetRequired(param.ParameterDescriptor)
+                required = docProvider.GetRequired(param.ParameterDescriptor),
+                @enum = docProvider.GetPossibleValues(param.ParameterDescriptor)
             };
 
             return parameter;
@@ -265,6 +266,8 @@ namespace Swagger.Net
         public bool required { get; set; }
         public bool allowMultiple { get; set; }
         public OperationParameterAllowableValues allowableValues { get; set; }
+
+        public string[] @enum { get; set; }
     }
 
     public class OperationParameterAllowableValues

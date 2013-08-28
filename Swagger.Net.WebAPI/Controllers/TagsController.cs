@@ -20,7 +20,7 @@ namespace Swagger.Net.WebApi.Controllers
         ///     </response>
         /// </responseCodes>
         /// <remarks>Notes</remarks>
-        public IEnumerable<string> Get()
+        public IEnumerable<string> Get(TagType tagType = TagType.NotDefined)
         {
             return new string[] { "value1", "value2" };
         }
@@ -33,15 +33,19 @@ namespace Swagger.Net.WebApi.Controllers
         /// dfsdfsdf
         /// </returns>
         /// <responseCodes>
-        ///   <response>
-        ///   <code>500</code>
-        ///   <message>Internal server errors</message>
-        ///   </response>
-        ///   </responseCodes>
+        ///     <response>
+        ///         <code>500</code>
+        ///         <message>Internal server errors</message>
+        ///     </response>
+        ///     <response>
+        ///         <code>400</code>
+        ///         <message>Bad request</message>
+        ///     </response>
+        /// </responseCodes>
         /// <remarks>
         /// Notes
         /// </remarks>
-        public Tag GetById(int id)
+        public Tag GetById(int id, TagType tagType = TagType.NotDefined)
         {
             return new Tag();
         }
@@ -89,6 +93,6 @@ namespace Swagger.Net.WebApi.Controllers
 
     public enum TagType
     {
-        Normal, Complext
+        Normal, Complex, NotDefined
     }
 }
