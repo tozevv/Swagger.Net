@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -6,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
+using Newtonsoft.Json;
 
 namespace Swagger.Net
 {
@@ -32,8 +34,13 @@ namespace Swagger.Net
         public const string BODY = "body";
         private static readonly Dictionary<string, TypeInfo> models = new Dictionary<string, TypeInfo>();
         private static readonly string[] IgnoreTypes = new[] { "integer", "string", "date-time", "void" };
+        private static readonly Regex _regexInteger = new Regex("int|double|float|long", RegexOptions.IgnoreCase);
+        private static readonly Regex _regexString = new Regex("string|byte", RegexOptions.IgnoreCase);
+        private static readonly Regex _regexDateTime = new Regex("dateTime|timeStamp", RegexOptions.IgnoreCase);
+        private static readonly Regex _regexBoolean = new Regex("boolean|bool", RegexOptions.IgnoreCase);
+        private static readonly Regex _regexArray = new Regex("ienumerable|isortablelist", RegexOptions.IgnoreCase);
 
-        public static string CreatePath(string path) 
+        public static string CreatePath(string path)
         {
             if (path != null)
             {
@@ -104,7 +111,7 @@ namespace Swagger.Net
             rApi.path = CreatePath(rApi.path);
             return rApi;
 
-          
+
         }
 
         /// <summary>
@@ -115,21 +122,54 @@ namespace Swagger.Net
         /// <returns>An api operation</returns>
         public static ResourceApiOperation CreateResourceApiOperation(ApiDescription api, XmlCommentDocumentationProvider docProvider)
         {
-            ResponseType responseType = docProvider.GetResponseType(api.ActionDescriptor);
-            ResourceApiOperation rApiOperation = new ResourceApiOperation()
+            ResponseMeta responseMeta = docProvider.GetResponseType(api.ActionDescriptor);
+            ModelInfo modelInfo = new ModelInfo();
+            SwaggerType swaggerType = GetSwaggerType(responseMeta.Type);
+
+            ResourceApiOperation rApiOperation = new ResourceApiOperation
             {
                 httpMethod = api.HttpMethod.ToString(),
                 nickname = docProvider.GetNickname(api.ActionDescriptor),
-                type = responseType.Name,
+                type = swaggerType.Type,
+                items = swaggerType.Items,
                 summary = api.Documentation,
                 notes = docProvider.GetNotes(api.ActionDescriptor),
                 parameters = new List<ResourceApiOperationParameter>(),
                 responseMessages = docProvider.GetResponseCodes(api.ActionDescriptor)
             };
 
-            TryToAddModels(responseType.Type);
+            TryToAddModels(responseMeta.Type);
 
             return rApiOperation;
+        }
+
+        private static SwaggerType GetSwaggerType(Type type)
+        {
+            var swaggerType = new SwaggerType();
+           
+
+            if (typeof(IEnumerable<object>).IsAssignableFrom(type) || type.IsArray)
+            {
+                swaggerType.Type = "array";
+                Type arrayType;
+                if (type.IsGenericType)
+                {
+                    arrayType = type.GetGenericArguments().First();
+                    swaggerType.Items = new ItemInfo { Ref = arrayType.Name };
+                }
+                else
+                {
+                    arrayType = type.GetElementType();
+                    swaggerType.Items = arrayType.Name;
+                }
+                TryToAddModels(arrayType);
+            }
+            else
+            {
+                swaggerType.Type = type.Name;
+            }
+
+            return swaggerType;
         }
 
         private static void TryToAddModels(Type type)
@@ -143,18 +183,23 @@ namespace Swagger.Net
                     var modelInfoDic = new Dictionary<string, ModelInfo>();
                     foreach (var propertyInfo in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
                     {
-                        var swaggerType = TranslateType(propertyInfo.PropertyType.Name);
-                        modelInfoDic.Add(propertyInfo.Name.ToLower(), new ModelInfo() { type = swaggerType });
+                        string modelName = propertyInfo.Name.ToLower();
+                        string swaggerType = TranslateType(propertyInfo.PropertyType.Name);
+
+
+                        ModelInfo modelInfo = new ModelInfo();
+                        modelInfo.type = swaggerType;
+                        modelInfoDic.Add(modelName, modelInfo);
 
                         if (propertyInfo.PropertyType.IsEnum)
                         {
-                            modelInfoDic[propertyInfo.Name.ToLower()].@enum = propertyInfo.PropertyType.GetEnumNames();
+                            modelInfoDic[modelName].@enum = propertyInfo.PropertyType.GetEnumNames();
                         }
 
-                        if (propertyInfo.PropertyType.IsClass && !IgnoreTypes.Contains(swaggerType))
-                        {
-                            TryToAddModels(propertyInfo.PropertyType);
-                        }
+                        //if (propertyInfo.PropertyType.IsClass && !IgnoreTypes.Contains(swaggerType))
+                        //{
+                        //    TryToAddModels(propertyInfo.PropertyType);
+                        //}
 
                     }
 
@@ -168,14 +213,16 @@ namespace Swagger.Net
 
         private static string TranslateType(string type)
         {
-
-            if (new Regex("int|double|float|long", RegexOptions.IgnoreCase).IsMatch(type))
+            if (_regexInteger.IsMatch(type))
                 return "integer";
-            if (new Regex("string|byte", RegexOptions.IgnoreCase).IsMatch(type))
+            if (_regexString.IsMatch(type))
                 return "string";
-            if (new Regex("dateTime|timeStamp", RegexOptions.IgnoreCase).IsMatch(type))
+            if (_regexDateTime.IsMatch(type))
                 return "date-time";
-
+            if (_regexBoolean.IsMatch(type))
+                return "boolean";
+            if (_regexArray.IsMatch(type))
+                return "array";
             return type;
         }
 
@@ -197,11 +244,18 @@ namespace Swagger.Net
                 description = param.Documentation,
                 dataType = param.ParameterDescriptor.ParameterType.Name,
                 required = docProvider.GetRequired(param.ParameterDescriptor),
-                @enum = docProvider.GetPossibleValues(param.ParameterDescriptor)
+                @enum = docProvider.GetPossibleValues(param.ParameterDescriptor),
+                defaultValue = docProvider.GetDefaultParameterValue(param.ParameterDescriptor)
             };
 
             return parameter;
         }
+    }
+
+    public class SwaggerType
+    {
+        public string Type { get; set; }
+        public object Items { get; set; }
     }
 
     public class ResponseMessage
@@ -223,8 +277,14 @@ namespace Swagger.Net
         public string description { get; set; }
         public IEnumerable<string> required { get; set; }
         public string[] @enum { get; set; }
+        public object items { get; set; }
     }
 
+    public class ItemInfo
+    {
+        [JsonProperty(PropertyName = "$ref")]
+        public string Ref { get; set; }
+    }
 
 
     public class ResourceListing
@@ -252,6 +312,7 @@ namespace Swagger.Net
         public string httpMethod { get; set; }
         public string nickname { get; set; }
         public string type { get { return _type ?? "void"; } set { _type = value; } }
+        public object items { get; set; }
         public string summary { get; set; }
         public string notes { get; set; }
         public List<ResourceApiOperationParameter> parameters { get; set; }
@@ -259,6 +320,7 @@ namespace Swagger.Net
 
     public class ResourceApiOperationParameter
     {
+        public string defaultValue { get; set; }
         public string paramType { get; set; }
         public string name { get; set; }
         public string description { get; set; }

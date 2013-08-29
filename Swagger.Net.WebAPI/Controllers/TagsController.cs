@@ -20,22 +20,19 @@ namespace Swagger.Net.WebApi.Controllers
         ///     </response>
         /// </responseCodes>
         /// <remarks>Notes</remarks>
-        public IEnumerable<string> Get(TagType tagType = TagType.NotDefined)
+        public IEnumerable<Tag> Get(TagType tagType = TagType.NotDefined)
         {
-            return new string[] { "value1", "value2" };
+            return new List<Tag>(){ new Tag() };
         }
 
         /// <summary>
-        /// Get a single Tag by it's id
+        /// What it does
         /// </summary>
-        /// <param name="id">The id.</param>
-        /// <returns>
-        /// dfsdfsdf
-        /// </returns>
+        /// <param name="id" default="12312312">The id.</param>
         /// <responseCodes>
         ///     <response>
-        ///         <code>500</code>
-        ///         <message>Internal server errors</message>
+        ///         <code>401</code>
+        ///         <message>Not authorized</message>
         ///     </response>
         ///     <response>
         ///         <code>400</code>
@@ -43,7 +40,7 @@ namespace Swagger.Net.WebApi.Controllers
         ///     </response>
         /// </responseCodes>
         /// <remarks>
-        /// Notes
+        ///     Implementation Notes
         /// </remarks>
         public Tag GetById(int id, TagType tagType = TagType.NotDefined)
         {

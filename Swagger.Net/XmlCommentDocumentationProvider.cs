@@ -87,7 +87,7 @@ namespace Swagger.Net
             return "No Documentation Found.";
         }
 
-        public virtual ResponseType GetResponseType(HttpActionDescriptor actionDescriptor)
+        public virtual ResponseMeta GetResponseType(HttpActionDescriptor actionDescriptor)
         {
             ReflectedHttpActionDescriptor reflectedActionDescriptor = actionDescriptor as ReflectedHttpActionDescriptor;
             if (reflectedActionDescriptor != null)
@@ -106,7 +106,7 @@ namespace Swagger.Net
                         if (i != (types.Length - 1)) sb.Append(", ");
                     }
                     sb.Append(">");
-                    return new ResponseType()
+                    return new ResponseMeta()
                         {
                             Name = sb.Replace("`1", "").ToString(),
                             Type = returnType
@@ -115,7 +115,7 @@ namespace Swagger.Net
                 }
                 else
                 {
-                    return new ResponseType()
+                    return new ResponseMeta()
                         {
                             Name = returnType.Name,
                             Type = returnType
@@ -222,9 +222,28 @@ namespace Swagger.Net
             return parameterDescriptor.ParameterType.GetEnumNames();
             
         }
+
+        public string GetDefaultParameterValue(HttpParameterDescriptor parameterDescriptor)
+        {
+            ReflectedHttpParameterDescriptor reflectedParameterDescriptor = parameterDescriptor as ReflectedHttpParameterDescriptor;
+            if (reflectedParameterDescriptor != null)
+            {
+                XPathNavigator memberNode = GetMemberNode(reflectedParameterDescriptor.ActionDescriptor);
+                if (memberNode != null)
+                {
+                    string parameterName = reflectedParameterDescriptor.ParameterInfo.Name;
+                    XPathNavigator parameterNode = memberNode.SelectSingleNode(string.Format("param[@name='{0}']", parameterName));
+                    if (parameterNode != null)
+                    {
+                        return parameterNode.GetAttribute("default",String.Empty);
+                    }
+                }
+            }
+            return null;
+        }
     }
 
-    public class ResponseType
+    public class ResponseMeta
     {
         public string Name { get; set; }
         public Type Type { get; set; }
