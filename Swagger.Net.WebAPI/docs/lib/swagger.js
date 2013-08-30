@@ -54,7 +54,7 @@
         method: "get",
         headers: {},
         on: {
-          error: function(response) {
+          error: function(error) {
             if (_this.url.substring(0, 4) !== 'http') {
               return _this.fail('Please specify the protocol for ' + _this.url);
             } else if (error.status === 0) {
@@ -74,6 +74,7 @@
             _this.apis = {};
             _this.apisArray = [];
             _this.produces = response.produces;
+			_this.apiSources = response.apiSources;
             if (response.info != null) {
               _this.info = response.info;
             }
@@ -241,7 +242,7 @@
           method: "get",
           headers: {},
           on: {
-            error: function(response) {
+            error: function(error) {
               return _this.api.fail("Unable to read api '" + _this.name + "' from path " + _this.url + " (server returned " + error.statusText + ")");
             },
             response: function(rawResponse) {

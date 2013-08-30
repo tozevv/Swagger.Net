@@ -1,0 +1,250 @@
+﻿{
+    "produces": [
+        "application/json",
+        "application/xml"
+    ],
+    "apiSources": [],
+    "apiVersion": "4.0.0.0",
+    "swaggerVersion": "2.0",
+    "basePath": "http://localhost:49508",
+    "resourcePath": "Tags",
+    "apis": [
+        {
+            "path": "/api/tags",
+            "description": "Get all of the Tags",
+            "operations": [
+                {
+                    "responseMessages": [
+                        {
+                            "code": 500,
+                            "message": "Internal server errors"
+                        }
+                    ],
+                    "httpMethod": "GET",
+                    "nickname": "Get",
+                    "type": "array",
+                    "items": {
+                        "$ref": "Tag"
+                    },
+                    "summary": "Get all of the Tags",
+                    "notes": "Notes",
+                    "parameters": [
+                        {
+                            "defaultValue": null,
+                            "paramType": "query",
+                            "name": "tagType",
+                            "description": "No Documentation Found.",
+                            "dataType": "TagType",
+                            "required": false,
+                            "allowMultiple": false,
+                            "allowableValues": null,
+                            "enum": [
+                                "Normal",
+                                "Complex",
+                                "NotDefined"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "path": "/api/tags/{id}",
+            "description": "What it does",
+            "operations": [
+                {
+                    "responseMessages": [
+                        {
+                            "code": 401,
+                            "message": "Not authorized"
+                        },
+                        {
+                            "code": 400,
+                            "message": "Bad request"
+                        }
+                    ],
+                    "httpMethod": "GET",
+                    "nickname": "GetById",
+                    "type": "Tag",
+                    "items": null,
+                    "summary": "What it does",
+                    "notes": "Implementation Notes",
+                    "parameters": [
+                        {
+                            "defaultValue": "12312312",
+                            "paramType": "path",
+                            "name": "id",
+                            "description": "The id.",
+                            "dataType": "Int32",
+                            "required": true,
+                            "allowMultiple": false,
+                            "allowableValues": null,
+                            "enum": null
+                        },
+                        {
+                            "defaultValue": null,
+                            "paramType": "query",
+                            "name": "tagType",
+                            "description": "No Documentation Found.",
+                            "dataType": "TagType",
+                            "required": false,
+                            "allowMultiple": false,
+                            "allowableValues": null,
+                            "enum": [
+                                "Normal",
+                                "Complex",
+                                "NotDefined"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "path": "/api/tags",
+            "description": "Create a new Tag",
+            "operations": [
+                {
+                    "responseMessages": null,
+                    "httpMethod": "POST",
+                    "nickname": "Post",
+                    "type": "Void",
+                    "items": null,
+                    "summary": "Create a new Tag",
+                    "notes": "No Documentation Found.",
+                    "parameters": [
+                        {
+                            "defaultValue": "",
+                            "paramType": "body",
+                            "name": "value",
+                            "description": "",
+                            "dataType": "String",
+                            "required": true,
+                            "allowMultiple": false,
+                            "allowableValues": null,
+                            "enum": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "path": "/api/tags/{id}",
+            "description": "Update a Tag by it's id",
+            "operations": [
+                {
+                    "responseMessages": null,
+                    "httpMethod": "PUT",
+                    "nickname": "Put",
+                    "type": "Void",
+                    "items": null,
+                    "summary": "Update a Tag by it's id",
+                    "notes": "No Documentation Found.",
+                    "parameters": [
+                        {
+                            "defaultValue": "",
+                            "paramType": "path",
+                            "name": "id",
+                            "description": "",
+                            "dataType": "Int32",
+                            "required": true,
+                            "allowMultiple": false,
+                            "allowableValues": null,
+                            "enum": null
+                        },
+                        {
+                            "defaultValue": "",
+                            "paramType": "body",
+                            "name": "value",
+                            "description": "",
+                            "dataType": "String",
+                            "required": true,
+                            "allowMultiple": false,
+                            "allowableValues": null,
+                            "enum": null
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "path": "/api/tags/{id}",
+            "description": "Remove a Tag by it's id",
+            "operations": [
+                {
+                    "responseMessages": null,
+                    "httpMethod": "DELETE",
+                    "nickname": "Delete",
+                    "type": "Void",
+                    "items": null,
+                    "summary": "Remove a Tag by it's id",
+                    "notes": "No Documentation Found.",
+                    "parameters": [
+                        {
+                            "defaultValue": "",
+                            "paramType": "path",
+                            "name": "id",
+                            "description": "",
+                            "dataType": "Int32",
+                            "required": true,
+                            "allowMultiple": false,
+                            "allowableValues": null,
+                            "enum": null
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "models": {
+        "Tag": {
+            "id": "Tag",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "format": null,
+                    "description": null,
+                    "required": null,
+                    "enum": null,
+                    "items": null
+                },
+                "description": {
+                    "type": "string",
+                    "format": null,
+                    "description": null,
+                    "required": null,
+                    "enum": null,
+                    "items": null
+                },
+                "value": {
+                    "type": "integer",
+                    "format": null,
+                    "description": null,
+                    "required": null,
+                    "enum": null,
+                    "items": null
+                },
+                "type": {
+                    "type": "TagType",
+                    "format": null,
+                    "description": null,
+                    "required": null,
+                    "enum": [
+                        "Normal",
+                        "Complex",
+                        "NotDefined"
+                    ],
+                    "items": null
+                },
+                "rating": {
+                    "type": "Rating",
+                    "format": null,
+                    "description": null,
+                    "required": null,
+                    "enum": null,
+                    "items": null
+                }
+            }
+        }
+    }
+}

@@ -137,14 +137,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="docs\css\highlight.default.css" />
+    <Content Include="docs\css\jquery.editable-select.css" />
     <Content Include="docs\css\screen.css" />
+    <Content Include="docs\images\arrow-down.gif" />
+    <Content Include="docs\images\logo_small.png" />
     <Content Include="docs\images\pet_store_api.png" />
+    <Content Include="docs\images\throbber.gif" />
     <Content Include="docs\images\wordnik_api.png" />
     <Content Include="docs\index.html" />
     <Content Include="docs\lib\backbone-min.js" />
-    <Content Include="docs\lib\handlebars.runtime-1.0.0.beta.6.js" />
     <Content Include="docs\lib\jquery.ba-bbq.min.js" />
-    <Content Include="docs\lib\jquery.min.js" />
     <Content Include="docs\lib\jquery.slideto.min.js" />
     <Content Include="docs\lib\jquery.wiggle.min.js" />
     <Content Include="docs\lib\swagger.js" />
@@ -177,6 +180,18 @@
       <Project>{23f318e4-d42f-484e-9c5a-41b652145cf0}</Project>
       <Name>Swagger.Net</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="docs\apiSources\sprint29\base.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="docs\apiSources\sprint29\tags.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="docs\apiSources\sprint30\base.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="docs\apiSources\sprint30\tags.json" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

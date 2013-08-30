@@ -1,0 +1,68 @@
+﻿{
+    "produces": [
+        "application/json",
+        "application/xml"
+    ],
+    "apiVersion": "4.0.0.0",
+    "swaggerVersion": "2.0",
+    "basePath": "http://localhost:49508",
+    "resourcePath": null,
+    "apis": [
+        {
+            "path": "/docs/apiSources/sprint30/tags.json",
+            "description": "Get all of the Tags",
+            "operations": []
+        }
+    ],
+    "models": {
+        "Tag": {
+            "id": "Tag",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "format": null,
+                    "description": null,
+                    "required": null,
+                    "enum": null,
+                    "items": null
+                },
+                "description": {
+                    "type": "string",
+                    "format": null,
+                    "description": null,
+                    "required": null,
+                    "enum": null,
+                    "items": null
+                },
+                "value": {
+                    "type": "integer",
+                    "format": null,
+                    "description": null,
+                    "required": null,
+                    "enum": null,
+                    "items": null
+                },
+                "type": {
+                    "type": "TagType",
+                    "format": null,
+                    "description": null,
+                    "required": null,
+                    "enum": [
+                        "Normal",
+                        "Complex",
+                        "NotDefined"
+                    ],
+                    "items": null
+                },
+                "rating": {
+                    "type": "Rating",
+                    "format": null,
+                    "description": null,
+                    "required": null,
+                    "enum": null,
+                    "items": null
+                }
+            }
+        }
+    }
+}

@@ -22,6 +22,7 @@ namespace Swagger.Net.WebApi.App_Start
                 routeTemplate: "api/docs/{controller}",
                 defaults: new { swagger = true }
             );
+
         }
 
         public static void PostStart()
