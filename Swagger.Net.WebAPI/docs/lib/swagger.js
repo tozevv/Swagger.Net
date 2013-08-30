@@ -61,7 +61,10 @@
               return _this.fail('Can\'t read from server.  It may not have the appropriate access-control-origin settings.');
             } else if (error.status === 404) {
               return _this.fail('Can\'t read swagger JSON from ' + _this.url);
-            } else {
+            } else if (error.status === 401) {
+              return _this.fail('Not authorized. Check api key');
+            }
+            else {
               return _this.fail(error.status + ' : ' + error.statusText + ' ' + _this.url);
             }
           },
@@ -182,11 +185,11 @@
       _ref = this.apis;
       for (resource_name in _ref) {
         resource = _ref[resource_name];
-        console.log(resource_name);
+        //console.log(resource_name);
         _ref1 = resource.operations;
         for (operation_name in _ref1) {
           operation = _ref1[operation_name];
-          console.log("  " + operation.nickname);
+          //console.log("  " + operation.nickname);
           _ref2 = operation.parameters;
           for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
             parameter = _ref2[_i];
@@ -472,7 +475,7 @@
       this.isCollection = this.dataType && (this.dataType.toLowerCase() === 'array' || this.dataType.toLowerCase() === 'list' || this.dataType.toLowerCase() === 'set');
       this.descr = obj.description;
       this.required = obj.required;
-      console.log(this);
+      //console.log(this);
       if (obj.items != null) {
         if (obj.items.type != null) {
           this.refDataType = obj.items.type;
@@ -561,7 +564,7 @@
       this.method = this.method.toLowerCase();
       this.isGetMethod = this.method === "get";
       this.resourceName = this.resource.name;
-      console.log("model type: " + type);
+      //console.log("model type: " + type);
       if (((_ref = this.type) != null ? _ref.toLowerCase() : void 0) === 'void') {
         this.type = void 0;
       }
@@ -730,18 +733,23 @@
         _results = [];
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           param = _ref1[_j];
-          if (param.paramType === "form" || param.paramType.toLowerCase() === "file") {
+          if (param.paramType === "form" || param.paramType.toLowerCase() === "file" || param.paramType === "body") {
             _results.push(param);
           }
         }
         return _results;
       }).call(this);
       if (possibleParams) {
+        
         for (key in possibleParams) {
+          
           value = possibleParams[key];
+         
+                   
           if (args[value.name]) {
             params[value.name] = args[value.name];
           }
+            
         }
       }
       req = new SwaggerRequest(this.method, this.urlify(args), params, opts, callback, error, this);
@@ -956,14 +964,27 @@
           }
           return _results;
         }).call(this);
-        values = {};
+        values = null;
         for (key in possibleParams) {
+            if( value == null) value = {};
           value = possibleParams[key];
           if (this.params[value.name]) {
             values[value.name] = this.params[value.name];
           }
         }
         urlEncoded = "";
+        var pairs = body.split('&'), body_params = {};         
+        if(pairs && pairs.length > 0)
+        {
+            for(i=0; i< pairs.length; ++i)
+            {
+                var content = pairs[i].split("=");
+                body_params[content[0]]=content[1];
+            }
+        }
+        if( values == null)
+         values = body_params;
+         
         for (key in values) {
           value = values[key];
           if (urlEncoded !== "") {

@@ -1300,26 +1300,12 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     }
 
     HeaderView.prototype.events = {
-      'click #show-pet-store-icon': 'showPetStore',
-      'click #show-wordnik-dev-icon': 'showWordnikDev',
       'click #explore': 'showCustom',
       'keyup #api_source': 'showCustomOnKeyup',
       'keyup #input_apiKey': 'showCustomOnKeyup'
     };
 
     HeaderView.prototype.initialize = function() {};
-
-    HeaderView.prototype.showPetStore = function(e) {
-      return this.trigger('update-swagger-ui', {
-        url: "http://petstore.swagger.wordnik.com/api/api-docs"
-      });
-    };
-
-    HeaderView.prototype.showWordnikDev = function(e) {
-      return this.trigger('update-swagger-ui', {
-        url: "http://api.wordnik.com/v4/resources.json"
-      });
-    };
 
     HeaderView.prototype.showCustomOnKeyup = function(e) {
       if (e.keyCode === 13) {
@@ -1449,18 +1435,23 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     OperationView.prototype.initialize = function() {};
 
     OperationView.prototype.render = function() {
-      var contentTypeModel, isMethodSubmissionSupported, param, responseContentTypeView, responseSignatureView, signatureModel, statusCode, type, _i, _j, _k, _len, _len1, _len2, _ref5, _ref6, _ref7;
+      var contentTypeModel, isArray, isMethodSubmissionSupported, param, responseContentTypeView, responseSignatureView, signatureModel, statusCode, type, _i, _j, _k, _len, _len1, _len2, _ref5, _ref6, _ref7;
       isMethodSubmissionSupported = true;
       if (!isMethodSubmissionSupported) {
         this.model.isReadOnly = true;
       }
       $(this.el).html(Handlebars.templates.operation(this.model));
+      isArray = false;
+      if (this.model.type && /array/.test(this.model.type)) {
+        isArray = true;
+        this.model.responseClassSignature = this.model.responseClassSignature.replace("array[", "").replace("]", "");
+      }
       if (this.model.responseClassSignature && this.model.responseClassSignature !== 'string') {
         signatureModel = {
           sampleJSON: this.model.responseSampleJSON,
           isParam: false,
           signature: this.model.responseClassSignature,
-          isArray: /array/.test(this.model.type)
+          isArray: isArray
         };
         responseSignatureView = new SignatureView({
           model: signatureModel,

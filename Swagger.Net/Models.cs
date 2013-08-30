@@ -71,6 +71,7 @@ namespace Swagger.Net
         public string summary { get; set; }
         public string notes { get; set; }
         public List<ResourceApiOperationParameter> parameters { get; set; }
+        public string[] consumes { get { return new[] { "application/json", "text/xml", "application/x-www-form-urlencoded" }; } }
     }
 
     public class ResourceApiOperationParameter
@@ -82,6 +83,9 @@ namespace Swagger.Net
         public string dataType { get; set; }
         public bool required { get; set; }
         public bool allowMultiple { get; set; }
+        
+       
+    
         public OperationParameterAllowableValues allowableValues { get; set; }
 
         public string[] @enum { get; set; }

@@ -53,7 +53,7 @@ namespace Swagger.Net
             }
             return path;
         }
-       
+
 
         /// <summary>
         /// Create a resource listing
@@ -127,7 +127,7 @@ namespace Swagger.Net
             {
                 httpMethod = api.HttpMethod.ToString(),
                 nickname = docProvider.GetNickname(api.ActionDescriptor),
-                type = swaggerType.Type,
+                type = swaggerType.Type.ToLower(),
                 items = swaggerType.Items,
                 summary = api.Documentation,
                 notes = docProvider.GetNotes(api.ActionDescriptor),
@@ -166,5 +166,5 @@ namespace Swagger.Net
     }
 
 
-    
+
 }

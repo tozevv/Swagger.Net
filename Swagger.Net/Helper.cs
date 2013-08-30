@@ -19,7 +19,7 @@ namespace Swagger.Net
         private static readonly Regex _regexBoolean = new Regex("boolean|bool", RegexOptions.IgnoreCase);
         private static readonly Regex _regexArray = new Regex("ienumerable|isortablelist", RegexOptions.IgnoreCase);
         private static readonly string[] IgnoreTypes = new[] { "integer", "string", "date-time", "void" };
-       
+
 
 
         public static string ServerPath
@@ -38,8 +38,6 @@ namespace Swagger.Net
         public static SwaggerType GetSwaggerType(Dictionary<string, TypeInfo> models, Type type)
         {
             var swaggerType = new SwaggerType();
-
-
             if (typeof(IEnumerable<object>).IsAssignableFrom(type) || type.IsArray)
             {
                 swaggerType.Type = "array";
@@ -47,12 +45,12 @@ namespace Swagger.Net
                 if (type.IsGenericType)
                 {
                     arrayType = type.GetGenericArguments().First();
-                    swaggerType.Items = new ItemInfo { Ref = arrayType.Name };
+                    swaggerType.Items = new ItemInfo { Ref = arrayType.Name.ToLower() };
                 }
                 else
                 {
                     arrayType = type.GetElementType();
-                    swaggerType.Items = arrayType.Name;
+                    swaggerType.Items = arrayType.Name.ToLower();
                 }
                 TryToAddModels(models, arrayType);
             }
@@ -64,44 +62,40 @@ namespace Swagger.Net
             return swaggerType;
         }
 
-        public static void TryToAddModels(Dictionary<string, TypeInfo> models, Type type)
+        public static void TryToAddModels(Dictionary<string, TypeInfo> models, Type type, int level = 0)
         {
-            if (models.All(m => m.Key != type.Name))
+            string typeName = type.Name.ToLower();
+            if (models.All(m => m.Key != typeName) && type.IsClass && !IgnoreTypes.Contains(typeName))
             {
-                if (type.IsClass && !IgnoreTypes.Contains(type.Name.ToLower()))
+                var typeInfo = new TypeInfo() { id = typeName };
+
+                var modelInfoDic = new Dictionary<string, ModelInfo>();
+                foreach (var propertyInfo in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
                 {
-                    var typeInfo = new TypeInfo() { id = type.Name };
-
-                    var modelInfoDic = new Dictionary<string, ModelInfo>();
-                    foreach (var propertyInfo in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-                    {
-                        string modelName = propertyInfo.Name.ToLower();
-                        string swaggerType = TranslateType(propertyInfo.PropertyType.Name);
-
-
-                        ModelInfo modelInfo = new ModelInfo();
-                        modelInfo.type = swaggerType;
+                    string modelName = propertyInfo.Name.ToLower();
+                    string swaggerType = TranslateType(propertyInfo.PropertyType.Name);
+                    
+                    ModelInfo modelInfo = new ModelInfo();
+                    modelInfo.type = swaggerType;
+                    if(!modelInfoDic.ContainsKey(modelName))
                         modelInfoDic.Add(modelName, modelInfo);
 
-                        if (propertyInfo.PropertyType.IsEnum)
-                        {
-                            modelInfoDic[modelName].@enum = propertyInfo.PropertyType.GetEnumNames();
-                        }
-
-                        //if (propertyInfo.PropertyType.IsClass && !IgnoreTypes.Contains(swaggerType))
-                        //{
-                        //    TryToAddModels(propertyInfo.PropertyType);
-                        //}
-
+                    if (propertyInfo.PropertyType.IsEnum)
+                    {
+                        modelInfoDic[modelName].@enum = propertyInfo.PropertyType.GetEnumNames();
                     }
 
-                    typeInfo.properties = modelInfoDic;
+                    if (propertyInfo.PropertyType.IsClass && !IgnoreTypes.Contains(swaggerType) && level < 3)
+                    {
+                        TryToAddModels(models, propertyInfo.PropertyType, ++level);
+                    }
 
-
-                    models.Add(type.Name, typeInfo);
                 }
+                typeInfo.properties = modelInfoDic;
+                models.Add(typeName, typeInfo);
             }
         }
+
         private static string TranslateType(string type)
         {
             if (_regexInteger.IsMatch(type))
