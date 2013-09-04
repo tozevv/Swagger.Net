@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace Swagger.Net
 
     public class SwaggerType
     {
-        public string Type { get; set; }
+        public string Name { get; set; }
         public object Items { get; set; }
     }
 
@@ -21,16 +22,18 @@ namespace Swagger.Net
 
     public class TypeInfo
     {
+        public string[] values;
         public string id { get; set; }
-        public Dictionary<string, ModelInfo> properties { get; set; }
+        public string description { get; set; }
+        public Dictionary<string, PropInfo> properties { get; set; }
     }
 
-    public class ModelInfo
+    public class PropInfo
     {
         public string type { get; set; }
         public string format { get; set; }
         public string description { get; set; }
-        public IEnumerable<string> required { get; set; }
+        public bool required { get; set; }
         public string[] @enum { get; set; }
         public object items { get; set; }
     }
@@ -71,7 +74,7 @@ namespace Swagger.Net
         public string summary { get; set; }
         public string notes { get; set; }
         public List<ResourceApiOperationParameter> parameters { get; set; }
-        public string[] consumes { get { return new[] { "application/json", "text/xml", "application/x-www-form-urlencoded" }; } }
+        public string[] consumes { get { return new[] { "application/x-www-form-urlencoded", "application/json", "text/xml"  }; } }
     }
 
     public class ResourceApiOperationParameter
@@ -108,6 +111,6 @@ namespace Swagger.Net
         public string basePath { get; set; }
         public string resourcePath { get; set; }
         public List<ResourceApi> apis { get; set; }
-        public Dictionary<string, TypeInfo> models { get; set; }
+        public ConcurrentDictionary<string, TypeInfo> models { get; set; }
     }
 }

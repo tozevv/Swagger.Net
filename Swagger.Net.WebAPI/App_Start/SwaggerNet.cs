@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Web.Http.Dispatcher;
@@ -20,9 +21,8 @@ namespace Swagger.Net.WebApi.App_Start
             RouteTable.Routes.MapHttpRoute(
                 name: "SwaggerApi",
                 routeTemplate: "api/docs/{controller}",
-                defaults: new { swagger = true }
+                defaults: new { swagger = true , action = "Get", Id = RouteParameter.Optional}
             );
-
         }
 
         public static void PostStart()
@@ -33,8 +33,9 @@ namespace Swagger.Net.WebApi.App_Start
 
             try
             {
+                var binFolder = HostingEnvironment.MapPath("~/bin/");
                 config.Services.Replace(typeof(IDocumentationProvider),
-                    new XmlCommentDocumentationProvider(HttpContext.Current.Server.MapPath("~/bin/Swagger.Net.WebApi.XML")));
+                    new XmlCommentDocumentationProvider(Directory.GetFiles(binFolder, "Swagger.Net.*.xml")));
             }
             catch (FileNotFoundException)
             {

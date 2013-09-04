@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 
@@ -18,12 +20,27 @@ namespace Swagger.Net.WebApi
                 return this.Roles.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
             }
         }
+
+        private static string GetApiKey(System.Web.Http.Controllers.HttpActionContext actionContext)
+        {
+            const string apiKeyEntry = "api_key";
+            IEnumerable<string> apiKey;
+
+            actionContext.Request.Headers.TryGetValues(apiKeyEntry, out apiKey);
+            if (apiKey != null && apiKey.Any())
+                return apiKey.First();
+
+            var queryEntry = actionContext.Request.GetQueryNameValuePairs().FirstOrDefault(kV => kV.Key == apiKeyEntry);
+
+            return queryEntry.Value;
+
+        }
+
         bool ISwaggerAuthorization.IsDescriptionAuthorized(System.Web.Http.Controllers.HttpActionContext actionContext)
         {
             if (this.RoleList.Contains("Admin"))
             {
-                HttpContextBase httpContextBase = actionContext.Request.Properties["MS_HttpContext"] as HttpContextBase;
-                string apiKey = httpContextBase.Request.Params["api_key"];
+                string apiKey = GetApiKey(actionContext);
                 return apiKey == "admin-key";
             }
             else

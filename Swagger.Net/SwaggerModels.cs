@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -9,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
+using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 
 namespace Swagger.Net
@@ -35,7 +37,7 @@ namespace Swagger.Net
         public const string PATH = "path";
         public const string BODY = "body";
 
-        private static readonly Dictionary<string, TypeInfo> models = new Dictionary<string, TypeInfo>();
+        private static readonly ConcurrentDictionary<string, TypeInfo> models = new ConcurrentDictionary<string, TypeInfo>();
 
         public static string CreatePath(string path)
         {
@@ -84,7 +86,7 @@ namespace Swagger.Net
                 apis = new List<ResourceApi>(),
                 models = models,
                 produces = new[] { "application/json", "application/xml" },
-                apiSources = Helper.GetApiSources()
+                apiSources = Helper.GetApiSources(controllerContext)
 
             };
 
@@ -120,23 +122,23 @@ namespace Swagger.Net
         public static ResourceApiOperation CreateResourceApiOperation(ApiDescription api, XmlCommentDocumentationProvider docProvider)
         {
             ResponseMeta responseMeta = docProvider.GetResponseType(api.ActionDescriptor);
-            ModelInfo modelInfo = new ModelInfo();
-            SwaggerType swaggerType = Helper.GetSwaggerType(models, responseMeta.Type);
+            SwaggerType swaggerType = Helper.GetSwaggerType(responseMeta.Type);
+
 
             ResourceApiOperation rApiOperation = new ResourceApiOperation
             {
                 httpMethod = api.HttpMethod.ToString(),
                 nickname = docProvider.GetNickname(api.ActionDescriptor),
-                type = swaggerType.Type.ToLower(),
                 items = swaggerType.Items,
+                type = swaggerType.Name,
                 summary = api.Documentation,
                 notes = docProvider.GetNotes(api.ActionDescriptor),
                 parameters = new List<ResourceApiOperationParameter>(),
                 responseMessages = docProvider.GetResponseCodes(api.ActionDescriptor)
             };
 
-            Helper.TryToAddModels(models, responseMeta.Type);
-
+            var typesToReturn = new ConcurrentDictionary<string, string>();
+            Helper.TryToAddModels(models, responseMeta.Type, docProvider, typesToReturn);
             return rApiOperation;
         }
 

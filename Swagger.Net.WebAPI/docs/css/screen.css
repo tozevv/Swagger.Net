@@ -1780,3 +1780,8 @@ pre code {
 .info_contact {
   padding-bottom: 5px;
 }
+
+.modelDescritpion{
+    color:green;
+    margin: 0 !important;
+}

@@ -22,10 +22,23 @@
   
   <script type="text/javascript">
     $(function () {
+      function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+        return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+      }
+       
+        var api_key = getParameterByName("api_key");      
+      $("#input_apiKey").val(api_key);
+      if(api_key)
+        window.authorizations.add("key", new ApiKeyAuthorization("api_key", api_key, "query"));
+       
       window.swaggerUi = new SwaggerUi({
       url: "/api/swagger",
       dom_id: "swagger-ui-container",
       supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
+      apiKey : api_key,
       onComplete: function(swaggerApi, swaggerUi){
 	  
         $('pre code').each(function(i, e) {hljs.highlightBlock(e)});

@@ -73,6 +73,8 @@ namespace Swagger.Net
                 if (!apiControllerName.Equals(actionContext.ControllerContext.ControllerDescriptor.ControllerName))
                     continue;
 
+                if(api.ActionDescriptor.GetCustomAttributes<SwaggerIgnoreAttribute>().Any())
+                    continue;
 
                 if (DescriptionAuthorized(actionContext, api.ActionDescriptor)) {
                     ResourceApi rApi = SwaggerGen.CreateResourceApi(api);

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
+using System.Xml;
 using System.Xml.XPath;
 
 namespace Swagger.Net
@@ -16,14 +18,30 @@ namespace Swagger.Net
     /// </summary>
     public class XmlCommentDocumentationProvider : IDocumentationProvider
     {
-        XPathNavigator _documentNavigator;
         private const string _methodExpression = "/doc/members/member[@name='M:{0}']";
+        private const string _propertyExpression = "/doc/members/member[@name='P:{0}']";
+        private const string _typeExpression = "/doc/members/member[@name='T:{0}']";
         private static Regex nullableTypeNameRegex = new Regex(@"(.*\.Nullable)" + Regex.Escape("`1[[") + "([^,]*),.*");
 
-        public XmlCommentDocumentationProvider(string documentPath)
+        private static IDictionary<string, XPathNavigator> _documentNavigators = new Dictionary<string, XPathNavigator>();
+
+        public XmlCommentDocumentationProvider(IEnumerable<string> documentPaths)
         {
-            XPathDocument xpath = new XPathDocument(documentPath);
-            _documentNavigator = xpath.CreateNavigator();
+            foreach (var documentPath in documentPaths)
+            {
+                try
+                {
+                    XPathDocument xpath = new XPathDocument(documentPath);
+                    _documentNavigators.Add(Path.GetFileNameWithoutExtension(documentPath), xpath.CreateNavigator());
+                }
+                catch (Exception) { }
+            }
+
+        }
+
+        private static XPathNavigator GetNavigator(string assemblyName)
+        {
+            return _documentNavigators.Keys.Contains(assemblyName) ? _documentNavigators[assemblyName] : null;
         }
 
         public virtual string GetDocumentation(HttpParameterDescriptor parameterDescriptor)
@@ -93,6 +111,17 @@ namespace Swagger.Net
             if (reflectedActionDescriptor != null)
             {
                 Type returnType = reflectedActionDescriptor.MethodInfo.ReturnType;
+                var membernode = GetMemberNode(actionDescriptor);
+                if (membernode != null)
+                {
+                    var overrideReturn = membernode.SelectSingleNode("overrideReturn");
+                    if (overrideReturn != null)
+                    {
+                        var type = overrideReturn.GetAttribute("type", String.Empty);
+                        returnType = Type.GetType(type, true, false);
+                    }
+                }
+
                 if (returnType.IsGenericType)
                 {
                     StringBuilder sb =
@@ -138,13 +167,51 @@ namespace Swagger.Net
             return "NicknameNotFound";
         }
 
+        public string GetSummary(PropertyInfo propertyInfo)
+        {
+            if (propertyInfo.DeclaringType == null)
+                return null;
+
+            string propertyFullname = String.Format("{0}.{1}", propertyInfo.DeclaringType.FullName, propertyInfo.Name);
+            string selectExpression = string.Format(_propertyExpression, propertyFullname);
+            return GetSummary(selectExpression, propertyInfo.DeclaringType.Assembly.GetName().Name);
+        }
+
+        public string GetSummary(Type type)
+        {
+            string typeName = type.FullName;
+            string selectExpression = string.Format(_typeExpression, typeName);
+            return GetSummary(selectExpression, type.Assembly.GetName().Name);
+        }
+
+        private string GetSummary(string selectExpression, string assemblyName)
+        {
+            var navigator = GetNavigator(assemblyName);
+            if (navigator == null)
+                return null;
+
+            XPathNavigator node = navigator.SelectSingleNode(selectExpression);
+            if (node == null)
+                return null;
+
+            var summary = node.SelectSingleNode("summary");
+            if (summary == null)
+                return null;
+
+            return summary.Value;
+        }
+
         private XPathNavigator GetMemberNode(HttpActionDescriptor actionDescriptor)
         {
             ReflectedHttpActionDescriptor reflectedActionDescriptor = actionDescriptor as ReflectedHttpActionDescriptor;
             if (reflectedActionDescriptor != null)
             {
+                var navigator = GetNavigator(reflectedActionDescriptor.MethodInfo.DeclaringType.Assembly.GetName().Name);
+                if (navigator == null)
+                    return null;
+
                 string selectExpression = string.Format(_methodExpression, GetMemberName(reflectedActionDescriptor.MethodInfo));
-                XPathNavigator node = _documentNavigator.SelectSingleNode(selectExpression);
+                XPathNavigator node = navigator.SelectSingleNode(selectExpression);
                 if (node != null)
                 {
                     return node;
@@ -213,14 +280,14 @@ namespace Swagger.Net
 
         public string[] GetPossibleValues(HttpParameterDescriptor parameterDescriptor)
         {
-           
+
             if (!parameterDescriptor.ParameterType.IsEnum)
             {
                 return null;
             }
 
             return parameterDescriptor.ParameterType.GetEnumNames();
-            
+
         }
 
         public string GetDefaultParameterValue(HttpParameterDescriptor parameterDescriptor)
@@ -235,11 +302,32 @@ namespace Swagger.Net
                     XPathNavigator parameterNode = memberNode.SelectSingleNode(string.Format("param[@name='{0}']", parameterName));
                     if (parameterNode != null)
                     {
-                        return parameterNode.GetAttribute("default",String.Empty);
+                        return parameterNode.GetAttribute("default", String.Empty);
                     }
                 }
             }
             return null;
+        }
+
+        public bool IsRequired(PropertyInfo propertyInfo)
+        {
+            bool required = false;
+            var navigator = GetNavigator(propertyInfo.PropertyType.Assembly.GetName().Name);
+            if (navigator == null)
+                return required;
+
+            string propertyFullname = String.Format("{0}.{1}", propertyInfo.DeclaringType.FullName, propertyInfo.Name);
+            string selectExpression = string.Format(_propertyExpression, propertyFullname);
+            var node = navigator.SelectSingleNode(selectExpression);
+            if (node == null)
+                return required;
+
+            node = node.SelectSingleNode("notRequired");
+            if (node == null)
+                return required;
+
+            Boolean.TryParse(node.Value, out required);
+            return required;
         }
     }
 
