@@ -157,6 +157,30 @@ namespace Swagger.Net
             return null;
         }
 
+        public Type GetType(PropertyInfo propertyInfo)
+        {
+            var type = propertyInfo.PropertyType;
+            var navigator = GetNavigator(propertyInfo.DeclaringType.Assembly.GetName().Name);
+            if (navigator == null)
+                return null;
+
+            string propertyFullname = String.Format("{0}.{1}", propertyInfo.DeclaringType.FullName, propertyInfo.Name);
+            string selectExpression = string.Format(_propertyExpression, propertyFullname);
+            XPathNavigator node = navigator.SelectSingleNode(selectExpression);
+            if (node != null)
+            {
+                var overrideReturn = node.SelectSingleNode("overrideReturn");
+                if (overrideReturn != null)
+                {
+                    var overrideReturnName = overrideReturn.GetAttribute("type", String.Empty);
+                    if (!string.IsNullOrWhiteSpace(overrideReturnName))
+                        type = Type.GetType(overrideReturnName, true, false);
+                }
+            }
+
+            return type;
+        }
+
         public virtual string GetNickname(HttpActionDescriptor actionDescriptor)
         {
             ReflectedHttpActionDescriptor reflectedActionDescriptor = actionDescriptor as ReflectedHttpActionDescriptor;

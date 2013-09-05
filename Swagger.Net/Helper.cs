@@ -23,7 +23,7 @@ namespace Swagger.Net
         private static readonly Regex _regexDateTime = new Regex("dateTime|timeStamp", RegexOptions.IgnoreCase);
         private static readonly Regex _regexBoolean = new Regex("boolean|bool", RegexOptions.IgnoreCase);
         private static readonly Regex _regexArray = new Regex("ienumerable|isortablelist", RegexOptions.IgnoreCase);
-        private static readonly string[] IgnoreTypes = new[] { "void", "object" };
+        private static readonly string[] IgnoreTypes = new[] { "void", "object", "string" };
         private static string[] _assembliesToExpose;
 
         private static string[] AssembliesToExpose
@@ -98,7 +98,7 @@ namespace Swagger.Net
                         typeInfo.description = docProvider.GetSummary(_type);
                     }
                     //Ignore properties for .net types
-                    if (!_type.Assembly.FullName.Contains("System"))
+                    if (!_type.Assembly.FullName.Contains("System") )
                     {
                         var modelInfoDic = new Dictionary<string, PropInfo>();
                         foreach (var propertyInfo in _type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
@@ -109,8 +109,8 @@ namespace Swagger.Net
                             var propInfo = new PropInfo();
 
                             string propName = GetPropertyName(propertyInfo);
-
-                            SwaggerType swaggerType = Helper.GetSwaggerType(propertyInfo.PropertyType);
+                            Type propType = docProvider.GetType(propertyInfo);
+                            SwaggerType swaggerType = Helper.GetSwaggerType(propType);
                             propInfo.type = swaggerType.Name;
                             propInfo.items = swaggerType.Items;
                             propInfo.required = IsRequired(propertyInfo, docProvider);

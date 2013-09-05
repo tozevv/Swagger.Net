@@ -138,10 +138,23 @@ namespace Swagger.Net.WebApi.Controllers
         public IEnumerable<Rating> OldRatings { get; set; }
     }
 
+    public class ExtendendTag : Tag
+    {
+        public string NewProperty { get; set; }    
+    }
+
     public class Rating
     {
         public string Name { get; set; }
         public DateTime CreateDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the tag.
+        /// </summary>
+        /// <value>
+        /// The tag.
+        /// </value>
+        /// <overrideReturn type="Swagger.Net.WebApi.Controllers.ExtendendTag, Swagger.Net.WebApi"></overrideReturn>
         public Tag Tag { get; set; }
     }
 
