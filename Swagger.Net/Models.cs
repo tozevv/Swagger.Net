@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json;
 
 namespace Swagger.Net
@@ -30,12 +28,19 @@ namespace Swagger.Net
 
     public class PropInfo
     {
+        public AllowableValues allowableValues;
         public string type { get; set; }
         public string format { get; set; }
         public string description { get; set; }
         public bool required { get; set; }
         public string[] @enum { get; set; }
         public object items { get; set; }
+    }
+
+    public class AllowableValues
+    {
+        public string valueType { get; set; }
+        public string[] values { get; set; }
     }
 
     public class ItemInfo
@@ -67,6 +72,7 @@ namespace Swagger.Net
     {
         private string _type;
         public List<ResponseMessage> responseMessages;
+        public string typeJson;
         public string httpMethod { get; set; }
         public string nickname { get; set; }
         public string type { get { return _type ?? "void"; } set { _type = value; } }

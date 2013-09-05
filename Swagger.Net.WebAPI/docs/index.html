@@ -16,7 +16,7 @@
   <script src='lib/underscore-min.js' type='text/javascript'></script>
   <script src='lib/backbone-min.js' type='text/javascript'></script>
   <script src='lib/swagger.js' type='text/javascript'></script>
-  <script src='swagger-ui.js' type='text/javascript'></script>
+  <script src='swagger-ui.min.js' type='text/javascript'></script>
   <script src='lib/highlight.7.3.pack.js' type='text/javascript'></script>    
   <script src='lib/jquery.editable-select.js' type='text/javascript'></script>
   
@@ -35,7 +35,7 @@
         window.authorizations.add("key", new ApiKeyAuthorization("api_key", api_key, "query"));
        
       window.swaggerUi = new SwaggerUi({
-      url: "/api/swagger",
+      url: "api/swagger",
       dom_id: "swagger-ui-container",
       supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
       apiKey : api_key,
@@ -69,6 +69,11 @@
 			});
 			//Set current url		
 			$("#api_source").val(swaggerApi.url);
+            
+            $(".expand").click(function(){
+                $(this).html( $(this).html() === "+" ? "-" : "+" );
+                $($(this).nextAll(".model")[0]).toggle("fast");
+              });
 		}
 		  },
 		  onFailure: function(data) {

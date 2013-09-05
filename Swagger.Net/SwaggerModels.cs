@@ -28,7 +28,7 @@ namespace Swagger.Net
         /// </summary>
         public static bool IgnoreRouteQueryParameters { get; set; }
 
-
+        public static JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings(){PreserveReferencesHandling = PreserveReferencesHandling.Objects};
         public const string SWAGGER = "swagger";
         public const string SWAGGER_VERSION = "2.0";
         public const string FROMURI = "FromUri";

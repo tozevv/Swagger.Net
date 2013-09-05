@@ -1633,7 +1633,7 @@ body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operatio
 }
 
 .model-signature .description div {
-    font-size: 0.9em;
+    font-size: 12px;
     line-height: 1.5em;
     margin-left: 1em;
 }
@@ -1785,3 +1785,13 @@ pre code {
     color:green;
     margin: 0 !important;
 }
+
+.expand{ 
+cursor: pointer;
+background-color: #F2F2F2;
+width: 1.5em; 
+font-size: 16px;
+}
+.modelTemplate{ position:relative; }
+.model { position:relative; display : none; }
+.description span { font-size: 13px !important; }

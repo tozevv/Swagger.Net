@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using Newtonsoft.Json;
 
 namespace Swagger.Net.WebApi.Controllers
 {
@@ -115,6 +116,7 @@ namespace Swagger.Net.WebApi.Controllers
         /// <value>
         /// The name.
         /// </value>
+        [JsonProperty("CustomName")]
         public string Name { get; set; }
         public string Description { get; set; }
         public int? Value { get; set; }
@@ -125,7 +127,7 @@ namespace Swagger.Net.WebApi.Controllers
         /// <value>
         /// The rating.
         /// </value>
-        /// <notRequired>true</notRequired>
+        /// <required>false</required>
         public Rating Rating { get; set; }
         /// <summary>
         /// Gets or sets the old ratings.

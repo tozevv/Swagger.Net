@@ -10,6 +10,8 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Http.Controllers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Swagger.Net
 {
@@ -21,7 +23,7 @@ namespace Swagger.Net
         private static readonly Regex _regexDateTime = new Regex("dateTime|timeStamp", RegexOptions.IgnoreCase);
         private static readonly Regex _regexBoolean = new Regex("boolean|bool", RegexOptions.IgnoreCase);
         private static readonly Regex _regexArray = new Regex("ienumerable|isortablelist", RegexOptions.IgnoreCase);
-        private static readonly string[] IgnoreTypes = new[] { "integer", "string", "date-time", "void", "object" };
+        private static readonly string[] IgnoreTypes = new[] { "void", "object" };
         private static string[] _assembliesToExpose;
 
         private static string[] AssembliesToExpose
@@ -95,46 +97,71 @@ namespace Swagger.Net
                     {
                         typeInfo.description = docProvider.GetSummary(_type);
                     }
-
-                    var modelInfoDic = new Dictionary<string, PropInfo>();
-                    foreach (var propertyInfo in _type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                    //Ignore properties for .net types
+                    if (!_type.Assembly.FullName.Contains("System"))
                     {
-                        var propInfo = new PropInfo();
-
-                        string propName = propertyInfo.Name;
-
-                        SwaggerType swaggerType = Helper.GetSwaggerType(propertyInfo.PropertyType);
-                        propInfo.type = swaggerType.Name;
-                        propInfo.items = swaggerType.Items;
-                        propInfo.required = IsRequired(propertyInfo, docProvider);
-
-                        if (!modelInfoDic.Keys.Contains(propName))
-                            modelInfoDic.Add(propName, propInfo);
-
-                        if (!IgnoreTypes.Contains(propInfo.type))
+                        var modelInfoDic = new Dictionary<string, PropInfo>();
+                        foreach (var propertyInfo in _type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
                         {
-                            propInfo.description = docProvider.GetSummary(propertyInfo);
+                            if (propertyInfo.GetCustomAttributes(typeof(JsonIgnoreAttribute), false).FirstOrDefault() != null)
+                                continue;
+
+                            var propInfo = new PropInfo();
+
+                            string propName = GetPropertyName(propertyInfo);
+
+                            SwaggerType swaggerType = Helper.GetSwaggerType(propertyInfo.PropertyType);
+                            propInfo.type = swaggerType.Name;
+                            propInfo.items = swaggerType.Items;
+                            propInfo.required = IsRequired(propertyInfo, docProvider);
 
 
-                            if (propertyInfo.PropertyType.IsEnum)
+                            if (!modelInfoDic.Keys.Contains(propName))
+                                modelInfoDic.Add(propName, propInfo);
+
+                            if (!IgnoreTypes.Contains(propInfo.type))
                             {
-                                modelInfoDic[propName].@enum = propertyInfo.PropertyType.GetEnumNames();
-                            }
+                                propInfo.description = docProvider.GetSummary(propertyInfo);
 
-                            if (IsOutputable(propertyInfo.PropertyType) && level < 10 && !propertyInfo.PropertyType.Assembly.GetName().Name.Contains("System"))
-                            {
-                                TryToAddModels(models, propertyInfo.PropertyType, docProvider, typesToReturn, ++level);
+
+                                if (propertyInfo.PropertyType.IsEnum)
+                                {
+                                    propInfo.allowableValues = new AllowableValues()
+                                        {
+                                            valueType = GetTypeName(propertyInfo.PropertyType)
+                                        };
+                                    propInfo.allowableValues.values = propertyInfo.PropertyType.GetEnumNames();
+                                    modelInfoDic[propName].@enum = propertyInfo.PropertyType.GetEnumNames();
+                                }
+
+                                if (IsOutputable(propertyInfo.PropertyType) && level < 10 &&
+                                    !propertyInfo.PropertyType.Assembly.GetName().Name.Contains("System"))
+                                {
+                                    TryToAddModels(models, propertyInfo.PropertyType, docProvider, typesToReturn,
+                                                   ++level);
+                                }
                             }
                         }
+                        typeInfo.properties = modelInfoDic;
                     }
-                    typeInfo.properties = modelInfoDic;
                     if (_type.IsEnum)
                     {
                         typeInfo.values = _type.GetEnumNames();
                     }
+
                     models.TryAdd(typeName, typeInfo);
                 }
             }
+        }
+
+        private static string GetPropertyName(PropertyInfo propertyInfo)
+        {
+            var name = propertyInfo.Name;
+            var jsonConvertAttribute = propertyInfo.GetCustomAttributes(typeof(JsonPropertyAttribute), false).FirstOrDefault() as JsonPropertyAttribute;
+            if (jsonConvertAttribute != null)
+                name = jsonConvertAttribute.PropertyName;
+
+            return name;
         }
 
         private static bool IsRequired(PropertyInfo propertyInfo, XmlCommentDocumentationProvider docProvider)

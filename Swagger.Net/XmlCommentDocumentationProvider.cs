@@ -118,7 +118,8 @@ namespace Swagger.Net
                     if (overrideReturn != null)
                     {
                         var type = overrideReturn.GetAttribute("type", String.Empty);
-                        returnType = Type.GetType(type, true, false);
+                        if(!string.IsNullOrWhiteSpace(type))
+                            returnType = Type.GetType(type, true, false);
                     }
                 }
 
@@ -312,7 +313,7 @@ namespace Swagger.Net
         public bool IsRequired(PropertyInfo propertyInfo)
         {
             bool required = false;
-            var navigator = GetNavigator(propertyInfo.PropertyType.Assembly.GetName().Name);
+            var navigator = GetNavigator(propertyInfo.DeclaringType.Assembly.GetName().Name);
             if (navigator == null)
                 return required;
 
@@ -322,7 +323,7 @@ namespace Swagger.Net
             if (node == null)
                 return required;
 
-            node = node.SelectSingleNode("notRequired");
+            node = node.SelectSingleNode("required");
             if (node == null)
                 return required;
 
