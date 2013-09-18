@@ -2556,6 +2556,10 @@ var Request = module.exports = function (xhr, params) {
     
     var uri = params.host + ':' + params.port + (params.path || '/');
     
+    if(params.headers.Accept === "text/javascript")
+    {
+      uri += params.path.indexOf("?") != -1 ? "&" : "?" + "callback=callback" 
+    }
     xhr.open(
         params.method || 'GET',
         (params.scheme || 'http') + '://' + uri,

@@ -449,7 +449,7 @@
       strong = '<span class="strong">';
       stronger = '<span class="stronger">';
       strongClose = '</span>';
-      classOpen = strong + this.name + ' { ' + strongClose;
+      classOpen = strong + this.name.replace("<","&lt;").replace(">","&gt;") + ' { ' + strongClose;
       classClose = strong + ' }' + strongClose;
       expandCode = "<span class='expand'>+</span>&nbsp;";
       returnVal = classOpen + "<div class='model'><div>" + propertiesStr.join(',</div><div>') + '</div></div>' + classClose ;
@@ -686,10 +686,10 @@
       if (isPrimitive) {
         return type;
       } else {
-        if (listType != null) {
-          return models[listType].getMockSignature(null, listType);
+        if (listType) {
+          return models[listType].getMockSignature(null,true);
         } else {
-          return models[type].getMockSignature(null, listType);
+          return models[type].getMockSignature(null);
         }
       }
     };
@@ -698,7 +698,7 @@
       var isPrimitive, listType, val;
       listType = this.isListType(type);
       isPrimitive = ((listType != null) && models[listType]) || (models[type] != null) ? false : true;
-      val = isPrimitive ? void 0 : (listType != null ? models[listType].createJSONSample() : models[type].createJSONSample());
+      val = isPrimitive ? void 0 : (listType ? models[listType].createJSONSample() : models[type].createJSONSample());
       if (val) {
         val = listType ? [val] : val;
         return JSON.stringify(val, null, 2);
@@ -756,6 +756,14 @@
           }
         }
       }
+
+      if( $("#deviceId").val() != "" )
+        params.headers["X-API-Device-Id"] =  $("#deviceId").val() || "";
+      if( $("#deviceModel").val() != "" )
+        params.headers["X-API-Device-Model"] =  $("#deviceModel").val() || "";
+      if( $("#deviceManufacturer").val() != "" )
+        params.headers["X-API-Device-Manufacturer"] =  $("#deviceManufacturer").val() || "";
+
       if (args.body != null) {
         params.body = args.body;
         delete args.body;

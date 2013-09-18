@@ -1787,11 +1787,20 @@ pre code {
 }
 
 .expand{ 
-cursor: pointer;
-background-color: #F2F2F2;
-width: 1.5em; 
-font-size: 16px;
+    cursor: pointer;
+    background-color: #F2F2F2;
+    width: 1.5em; 
+    font-size: 16px;
 }
+
 .modelTemplate{ position:relative; }
 .model { position:relative; display : none; }
 .description span { font-size: 13px !important; }
+
+.devices { background-color: #CAD9A5; vertical-align: center; height: 3em; border-radius: 5px; }
+.devices span {color: white; font-weight: bold; }
+.devices .center {
+    width: 660px;
+    margin: 0 auto;
+    padding-top: 0.7em;
+}

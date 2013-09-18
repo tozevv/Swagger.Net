@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json;
+using Swagger.Net.WebApi.Models;
 
 namespace Swagger.Net.WebApi.Controllers
 {
@@ -21,9 +20,23 @@ namespace Swagger.Net.WebApi.Controllers
         ///     </response>
         /// </responseCodes>
         /// <remarks>Notes</remarks>
-        public Tag[] Get(TagType tagType = TagType.NotDefined)
+        public Metadata<Tag[]> Get(TagType tagType = TagType.NotDefined)
         {
-            return new List<Tag>() { new Tag() }.ToArray();
+            return null;
+        }
+
+
+        public Metadata<bool?> GetXPTO(string xpto)
+        {
+            return null;
+        }
+        /// <summary>
+        /// Gets the task.
+        /// </summary>
+        /// <returns></returns>
+        public Task<PagedMetadata<Tag[]>> GetTask()
+        {
+            return null;
         }
 
         /// <summary>
@@ -43,9 +56,9 @@ namespace Swagger.Net.WebApi.Controllers
         /// <remarks>
         ///     Implementation Notes
         /// </remarks>
-        public Tag GetById(int id, TagType tagType = TagType.NotDefined)
+        public ActionsMetadata<Tag> GetById(int id, TagType tagType = TagType.NotDefined)
         {
-            return new Tag();
+            return null;
         }
 
         

@@ -16,11 +16,11 @@ namespace Swagger.Net.WebApi
     {
         protected void Application_Start()
         {
-            AreaRegistration.RegisterAllAreas();
+           // AreaRegistration.RegisterAllAreas();
 
             WebApiConfig.Register(GlobalConfiguration.Configuration);
-            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);
+           // FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            RouteConfig.RegisterRoutes(GlobalConfiguration.Configuration.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
     }

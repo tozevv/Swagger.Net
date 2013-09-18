@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Web;
 using System.Web.Hosting;
@@ -16,13 +17,17 @@ namespace Swagger.Net.WebApi.App_Start
     {
         public static void PreStart()
         {
-            SwaggerGen.LowercaseRoutes = true; 
+            SwaggerGen.LowercaseRoutes = true;
+
+            
 
             RouteTable.Routes.MapHttpRoute(
                 name: "SwaggerApi",
                 routeTemplate: "api/docs/{controller}",
-                defaults: new { swagger = true , action = "Get", Id = RouteParameter.Optional}
+                defaults: new { swagger = true, action = "Get", Id = RouteParameter.Optional }
             );
+
+
         }
 
         public static void PostStart()

@@ -15,111 +15,117 @@
   <script src='lib/handlebars-1.0.0.js' type='text/javascript'></script>
   <script src='lib/underscore-min.js' type='text/javascript'></script>
   <script src='lib/backbone-min.js' type='text/javascript'></script>
+  <script src='lib/skyextensions.js' type='text/javascript'></script>
   <script src='lib/swagger.js' type='text/javascript'></script>
-  <script src='swagger-ui.min.js' type='text/javascript'></script>
+  <script src='swagger-ui.js' type='text/javascript'></script>
   <script src='lib/highlight.7.3.pack.js' type='text/javascript'></script>    
   <script src='lib/jquery.editable-select.js' type='text/javascript'></script>
   
   <script type="text/javascript">
-    $(function () {
-      function getParameterByName(name) {
-        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-            results = regex.exec(location.search);
-        return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-      }
-       
-        var api_key = getParameterByName("api_key");      
-      $("#input_apiKey").val(api_key);
-      if(api_key)
-        window.authorizations.add("key", new ApiKeyAuthorization("api_key", api_key, "query"));
-       
-      window.swaggerUi = new SwaggerUi({
+  $(function () {
+    function getParameterByName(name) {
+      name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+      var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+      results = regex.exec(location.search);
+      return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+    var api_key = getParameterByName("api_key");      
+    $("#input_apiKey").val(api_key);
+    if(api_key)
+      window.authorizations.add("key", new ApiKeyAuthorization("api_key", api_key, "query"));
+
+    window.swaggerUi = new SwaggerUi({
       url: "api/swagger",
       dom_id: "swagger-ui-container",
       supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
       apiKey : api_key,
       onComplete: function(swaggerApi, swaggerUi){
-	  
+
         $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
-		
-		var options = "";
-		
+
+        var options = "";
+
 		//Go through apisources and add them to select
-		$("#api_source").append("<option val='"+swaggerApi.url+"'>"+swaggerApi.url+"</option>");
-		if(swaggerApi.apiSources){
-			var total = swaggerApi.apiSources.length -1, i = 0 ;
-			while(i <= total)
-			{
-				var source = swaggerApi.apiSources[i];			
-				options += "<option val='"+source.path+"'>"+source.name+"</option>";
-				++i;
-			}		
-			$("#api_source").append(options);	
-			//Init editable select plugin			
-			$('#api_source').editableSelect(
-			{
-			  bg_iframe: true,
-			  onSelect: function(list_item) {
-			  $("#api_source").val($(list_item).attr("data-val") );
-			  },
-			  case_sensitive: false, // If set to true, the user has to type in an exact
-									 // match for the item to get highlighted
-			  items_then_scroll: 10 // If there are more than 10 items, display a scrollbar
-			});
-			//Set current url		
-			$("#api_source").val(swaggerApi.url);
-            
-            $(".expand").click(function(){
-                $(this).html( $(this).html() === "+" ? "-" : "+" );
-                $($(this).nextAll(".model")[0]).toggle("fast");
-              });
-		}
-		  },
-		  onFailure: function(data) {
-			if(console) {
-			  console.log("Unable to Load SwaggerUI");
-			  console.log(data);
-			}
-		  },
-		  docExpansion: "none"
-		});
+    $("#api_source").append("<option val='"+swaggerApi.url+"'>"+swaggerApi.url+"</option>");
+    if(swaggerApi.apiSources){
+      var total = swaggerApi.apiSources.length -1, i = 0 ;
+      while(i <= total)
+      {
+        var source = swaggerApi.apiSources[i];      
+        options += "<option val='"+source.path+"'>"+source.name+"</option>";
+        ++i;
+      }   
+      $("#api_source").append(options); 
+      //Init editable select plugin     
+      $('#api_source').editableSelect(
+      {
+       bg_iframe: true,
+       onSelect: function(list_item) {
+         $("#api_source").val($(list_item).attr("data-val") );
+       },
+        case_sensitive: false, // If set to true, the user has to type in an exact
+                   // match for the item to get highlighted
+        items_then_scroll: 10 // If there are more than 10 items, display a scrollbar
+      });
+      //Set current url   
+      $("#api_source").val(swaggerApi.url);
+
+      $(".expand").click(function(){
+        $(this).html( $(this).html() === "+" ? "-" : "+" );
+        $($(this).nextAll(".model")[0]).toggle("fast");
+      });
+    }
 
     $('#input_apiKey').change(function() {
-      var key = $('#input_apiKey')[0].value;
-      console.log("key: " + key);
-      if(key && key.trim() != "") {
-        console.log("added key " + key);
-        window.authorizations.add("key", new ApiKeyAuthorization("api_key", key, "query"));
-      }
-    })
-	
-    window.swaggerUi.load();
-	});
-	
-	
-  </script>
+        var key = $('#input_apiKey').val();
+
+        console.log("key: " + key);
+        if(key && key.trim() != "") {
+          console.log("added key " + key);
+          window.authorizations.add("key", new ApiKeyAuthorization("api_key", key, "query"));
+        }
+      });
+    
+
+    },
+    onFailure: function(data) {
+     if(console) {
+       console.log("Unable to Load SwaggerUI");
+       console.log(data);
+     }
+   },
+    docExpansion: "none"
+});
+
+
+
+window.swaggerUi.load();
+});
+
+
+</script>
 </head>
 
 <body>
-<div id='header'>
-  <div class="swagger-ui-wrap">
-    <a id="logo" href="http://swagger.wordnik.com">swagger</a>
+  <div id='header'>
+    <div class="swagger-ui-wrap">
+      <a id="logo" href="http://swagger.wordnik.com">swagger</a>
 
-    <form id='api_selector'>
-     
-      <div class='input'><!-- <input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text"/> -->
-	  <select id="api_source">
-		
-	  </select>
-	  </div>
-      <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
-      <div class='input'><a id="explore" href="#">Explore</a></div>
-    </form>
-  </div>
-</div>
+      <form id='api_selector'>
 
-<div id="message-bar" class="swagger-ui-wrap">
+        <div class='input'><!-- <input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text"/> -->
+         <select id="api_source">
+
+         </select>
+       </div>
+       <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
+       <div class='input'><a id="explore" href="#">Explore</a></div>
+     </form>
+   </div>
+ </div>
+
+ <div id="message-bar" class="swagger-ui-wrap">
   &nbsp;
 </div>
 

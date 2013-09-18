@@ -85,7 +85,6 @@ namespace Swagger.Net
                 basePath = uri.GetLeftPart(UriPartial.Authority) + HttpRuntime.AppDomainAppVirtualPath.TrimEnd('/'),
                 apis = new List<ResourceApi>(),
                 models = models,
-                produces = new[] { "application/json", "application/xml" },
                 apiSources = Helper.GetApiSources(controllerContext)
 
             };

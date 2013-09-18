@@ -21,9 +21,9 @@ namespace Swagger.Net
         private const string _methodExpression = "/doc/members/member[@name='M:{0}']";
         private const string _propertyExpression = "/doc/members/member[@name='P:{0}']";
         private const string _typeExpression = "/doc/members/member[@name='T:{0}']";
-        private static Regex nullableTypeNameRegex = new Regex(@"(.*\.Nullable)" + Regex.Escape("`1[[") + "([^,]*),.*");
+        private static readonly Regex nullableTypeNameRegex = new Regex(@"(.*\.Nullable)" + Regex.Escape("`1[[") + "([^,]*),.*");
 
-        private static IDictionary<string, XPathNavigator> _documentNavigators = new Dictionary<string, XPathNavigator>();
+        private static readonly IDictionary<string, XPathNavigator> _documentNavigators = new Dictionary<string, XPathNavigator>();
 
         public XmlCommentDocumentationProvider(IEnumerable<string> documentPaths)
         {
@@ -123,12 +123,12 @@ namespace Swagger.Net
                     }
                 }
 
-                if (returnType.IsGenericType)
+                if (returnType.IsGenericType && !Helper.RegexMetadataTypes.IsMatch(returnType.Name.ToLower()))
                 {
-                    StringBuilder sb =
+                    var sb =
                         new StringBuilder(reflectedActionDescriptor.MethodInfo.ReturnParameter.ParameterType.Name);
                     sb.Append("<");
-                    Type[] types =
+                    var types =
                         reflectedActionDescriptor.MethodInfo.ReturnParameter.ParameterType.GetGenericArguments();
                     for (int i = 0; i < types.Length; i++)
                     {
@@ -162,8 +162,9 @@ namespace Swagger.Net
             var type = propertyInfo.PropertyType;
             var navigator = GetNavigator(propertyInfo.DeclaringType.Assembly.GetName().Name);
             if (navigator == null)
-                return null;
+                return propertyInfo.PropertyType;
 
+          
             string propertyFullname = String.Format("{0}.{1}", propertyInfo.DeclaringType.FullName, propertyInfo.Name);
             string selectExpression = string.Format(_propertyExpression, propertyFullname);
             XPathNavigator node = navigator.SelectSingleNode(selectExpression);

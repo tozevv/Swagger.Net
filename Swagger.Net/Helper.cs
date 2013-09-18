@@ -5,56 +5,51 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 using System.Web.Hosting;
 using System.Web.Http.Controllers;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace Swagger.Net
 {
     public static class Helper
     {
         private static string _serverPath;
-        private static readonly Regex _regexInteger = new Regex("int|double|float|long", RegexOptions.IgnoreCase);
-        private static readonly Regex _regexString = new Regex("string|byte", RegexOptions.IgnoreCase);
-        private static readonly Regex _regexDateTime = new Regex("dateTime|timeStamp", RegexOptions.IgnoreCase);
-        private static readonly Regex _regexBoolean = new Regex("boolean|bool", RegexOptions.IgnoreCase);
-        private static readonly Regex _regexArray = new Regex("ienumerable|isortablelist", RegexOptions.IgnoreCase);
-        private static readonly string[] IgnoreTypes = new[] { "void", "object", "string" };
-        private static string[] _assembliesToExpose;
+        public static readonly Regex RegexInteger = new Regex("int|double|float|long", RegexOptions.IgnoreCase);
+        public static readonly Regex RegexString = new Regex("string|byte", RegexOptions.IgnoreCase);
+        public static readonly Regex RegexDateTime = new Regex("dateTime|timeStamp", RegexOptions.IgnoreCase);
+        public static readonly Regex RegexBoolean = new Regex("bool", RegexOptions.IgnoreCase);
+        public static readonly Regex RegexArray = new Regex("ienumerable|isortablelist", RegexOptions.IgnoreCase);
+        public static readonly Regex RegexRecursiveTypes = new Regex("task`1|nullable`1", RegexOptions.IgnoreCase);
+        public static readonly Regex RegexArrayTypes = new Regex(@"\[\]|ienumerable|isorteablelist",RegexOptions.IgnoreCase);
+        public static readonly Regex RegexMetadataTypes = new Regex("metadata`1|pagedmetadata`1|actionsmetadata`1",RegexOptions.IgnoreCase);
 
-        private static string[] AssembliesToExpose
-        {
-            get
-            {
-                if (_assembliesToExpose == null)
-                {
-                    var assembliesToExpose = ConfigurationManager.AppSettings["SwaggerAssembliesToExpose"];
-                    if (assembliesToExpose != null)
-                        Helper._assembliesToExpose = assembliesToExpose.Split(',');
-                }
-                return _assembliesToExpose;
-            }
-        }
+        private static readonly string[] IgnoreTypes = new[] { "void", "object", "string", "bool" };
+       
+      
         public static string ServerPath
         {
             get
             {
                 if (_serverPath == null)
                 {
-                    _serverPath = HttpContext.Current.Server.MapPath("~");
+                    _serverPath = HostingEnvironment.MapPath("~");
                 }
                 return _serverPath;
-            }
+            }   
         }
 
 
         public static SwaggerType GetSwaggerType(Type type)
         {
             var swaggerType = new SwaggerType();
+
+            //Dig until finding a suitable type
+            if (RegexRecursiveTypes.IsMatch(type.Name.ToLower()))
+            {
+                return GetSwaggerType(type.GetGenericArguments().First());
+            }
+
             if (typeof(IEnumerable<object>).IsAssignableFrom(type) || type.IsArray)
             {
                 swaggerType.Name = "array";
@@ -69,10 +64,12 @@ namespace Swagger.Net
 
                 }
                 swaggerType.Items = new ItemInfo { Ref = GetTypeName(arrayType) };
+                swaggerType.type = arrayType;
             }
             else
             {
                 swaggerType.Name = GetTypeName(type);
+                swaggerType.type = type;
             }
 
             return swaggerType;
@@ -83,7 +80,7 @@ namespace Swagger.Net
             var _type = type;
             if (type.IsArray)
                 _type = type.GetElementType();
-            else if (type.IsGenericType)
+            else if (type.IsGenericType && !RegexMetadataTypes.IsMatch(_type.Name.ToLower()))
                 _type = type.GetGenericArguments().First();
 
             string typeName = GetTypeName(_type);
@@ -92,13 +89,13 @@ namespace Swagger.Net
             {
                 if (IsOutputable(_type))
                 {
-                    var typeInfo = new TypeInfo() { id = typeName };
+                    var typeInfo = new TypeInfo { id = typeName };
                     if (!IgnoreTypes.Contains(_type.Name.ToLower()))
                     {
                         typeInfo.description = docProvider.GetSummary(_type);
                     }
                     //Ignore properties for .net types
-                    if (!_type.Assembly.FullName.Contains("System") )
+                    if (!_type.Assembly.FullName.Contains("System") && !_type.Assembly.FullName.Contains("mscorlib"))
                     {
                         var modelInfoDic = new Dictionary<string, PropInfo>();
                         foreach (var propertyInfo in _type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
@@ -109,8 +106,33 @@ namespace Swagger.Net
                             var propInfo = new PropInfo();
 
                             string propName = GetPropertyName(propertyInfo);
-                            Type propType = docProvider.GetType(propertyInfo);
-                            SwaggerType swaggerType = Helper.GetSwaggerType(propType);
+                            Type propType;
+                            //If declaring type is Metadata, or derived,  get the generic type
+                            if (RegexMetadataTypes.IsMatch(propertyInfo.ReflectedType.Name))
+                            {
+                                if(propertyInfo.Name == "Content")
+                                    propType = propertyInfo.ReflectedType.GetGenericArguments().First();
+                                else
+                                {
+                                    switch (propertyInfo.ReflectedType.Name.ToLower())
+                                    {
+                                        case "pagedmetadata`1":
+                                            propType = Type.GetType("BSkyB.SuperMam.Web.Common.Messages.PagedMeta, SuperMam.Web.Common") ?? docProvider.GetType(propertyInfo);
+                                            break;
+                                        case "actionsmetadata`1":
+                                            propType = Type.GetType("BSkyB.SuperMam.Web.Common.Messages.ActionsMeta, SuperMam.Web.Common") ?? docProvider.GetType(propertyInfo);
+                                            break;
+                                        default:
+                                            propType =  docProvider.GetType(propertyInfo);
+                                            break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                propType = docProvider.GetType(propertyInfo);
+                            }
+                            SwaggerType swaggerType = GetSwaggerType(propType);
                             propInfo.type = swaggerType.Name;
                             propInfo.items = swaggerType.Items;
                             propInfo.required = IsRequired(propertyInfo, docProvider);
@@ -122,23 +144,18 @@ namespace Swagger.Net
                             if (!IgnoreTypes.Contains(propInfo.type))
                             {
                                 propInfo.description = docProvider.GetSummary(propertyInfo);
-
-
                                 if (propertyInfo.PropertyType.IsEnum)
                                 {
-                                    propInfo.allowableValues = new AllowableValues()
-                                        {
-                                            valueType = GetTypeName(propertyInfo.PropertyType)
-                                        };
-                                    propInfo.allowableValues.values = propertyInfo.PropertyType.GetEnumNames();
+                                    //propInfo.allowableValues = new AllowableValues()
+                                    //    {
+                                    //        valueType = GetTypeName(propertyInfo.PropertyType)
+                                    //    };
+                                    //propInfo.allowableValues.values = propertyInfo.PropertyType.GetEnumNames();
                                     modelInfoDic[propName].@enum = propertyInfo.PropertyType.GetEnumNames();
                                 }
-
-                                if (IsOutputable(propertyInfo.PropertyType) && level < 10 &&
-                                    !propertyInfo.PropertyType.Assembly.GetName().Name.Contains("System"))
+                                if (level < 10)
                                 {
-                                    TryToAddModels(models, propertyInfo.PropertyType, docProvider, typesToReturn,
-                                                   ++level);
+                                    TryToAddModels(models, swaggerType.type, docProvider, typesToReturn, ++level);
                                 }
                             }
                         }
@@ -182,8 +199,14 @@ namespace Swagger.Net
             }
             else if (type.IsGenericType)
             {
-                name = type.GetGenericArguments().First().Name;
-
+                if (RegexMetadataTypes.IsMatch(name))
+                {
+                    name = String.Format(@"{0}<{1}>", type.Name, GetTypeName(type.GetGenericArguments().First()));
+                }
+                else
+                {
+                    name =  type.GetGenericArguments().First().Name;
+                }
             }
 
             return name.ToLower().Replace("`1", "");
@@ -199,15 +222,15 @@ namespace Swagger.Net
         }
         private static string TranslateType(string type)
         {
-            if (_regexInteger.IsMatch(type))
+            if (RegexInteger.IsMatch(type))
                 return "integer";
-            if (_regexString.IsMatch(type))
+            if (RegexString.IsMatch(type))
                 return "string";
-            if (_regexDateTime.IsMatch(type))
+            if (RegexDateTime.IsMatch(type))
                 return "date-time";
-            if (_regexBoolean.IsMatch(type))
+            if (RegexBoolean.IsMatch(type))
                 return "boolean";
-            if (_regexArray.IsMatch(type))
+            if (RegexArray.IsMatch(type))
                 return "array";
 
             return type;
@@ -220,7 +243,8 @@ namespace Swagger.Net
 
         public static ApiSource[] GetApiSources(HttpControllerContext controllerContext)
         {
-            var dir = ConfigurationManager.AppSettings["ApiSourceDir"] ?? Path.Combine("docs", "apiSources");
+            var apiAction = ConfigurationManager.AppSettings["SwaggerApiActionForSwaggerFiles"] ?? "";
+            var dir = ConfigurationManager.AppSettings["SwaggerApiSourceDir"] ?? Path.Combine("docs", "apiSources");
             var fullPath = Path.Combine(ServerPath, dir);
             string serverPhysicalPath = HostingEnvironment.ApplicationPhysicalPath;
             var sourcesList = Directory.GetDirectories(fullPath).Select(_dir =>
@@ -228,7 +252,7 @@ namespace Swagger.Net
                     var file = Directory.GetFiles(_dir, "base.json").First();
                     return new ApiSource(
                         Path.GetFileName(_dir),
-                        file.Replace(serverPhysicalPath, "/").Replace(@"\", @"/")
+                        String.Format("{0}?filePath={1}",apiAction, file.Replace(serverPhysicalPath, @""))
                         );
                 });
 

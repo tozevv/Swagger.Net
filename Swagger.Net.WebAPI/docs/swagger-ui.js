@@ -295,7 +295,7 @@ function program8(depth0,data) {
   buffer += "<div class='info' id='api_info'>\n  ";
   stack1 = helpers['if'].call(depth0, depth0.info, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n<div class='container' id='resources_container'>\n    <ul id='resources'>\n    </ul>\n\n    <div class=\"footer\">\n        <br>\n        <br>\n        <h4 style=\"color: #999\">[ <span style=\"font-variant: small-caps\">base url</span>: ";
+  buffer += "\n</div>\n<div class='container' id='resources_container'>\n    <div class=\"devices\">\n        <div class=\"center\">\n            <span>Set device:&nbsp;</span>\n            <select id=\"deviceList\">   \n                <option val=\"Web\">Web</option>\n                <option val=\"YouView\">YouView</option>\n                <option val=\"Roku\">Roku</option>\n            </select>\n            <input type=\"text\" id=\"deviceId\" placeholder=\"id\" />\n\n            <input type=\"text\" id=\"deviceModel\" placeholder=\"model\" />\n\n            <input type=\"text\" id=\"deviceManufacturer\" placeholder=\"manufacturer\" />\n        </div>\n    </div>\n    <ul id='resources'>\n    </ul>\n\n    <div class=\"footer\">\n        <br>\n        <br>\n        <h4 style=\"color: #999\">[ <span style=\"font-variant: small-caps\">base url</span>: ";
   if (stack1 = helpers.basePath) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.basePath; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
@@ -1075,7 +1075,7 @@ function program2(depth0,data) {
 function program4(depth0,data) {
   
   
-  return "\n  <option value=\"application/json\">application/json</option>\n";
+  return "\n  <option value=\"application/json\">application/json</option>\n  <option value=\"text/xml\">text/xml</option>\n  <option value=\"text/javascript\">jsonp</option>\n";
   }
 
   buffer += "<label for=\"responseContentType\"></label>\n<select name=\"responseContentType\">\n";
@@ -1153,6 +1153,21 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     SwaggerUi.prototype.headerView = null;
 
     SwaggerUi.prototype.mainView = null;
+
+    SwaggerUi.prototype.devices = {
+      Web: {
+        model: "",
+        manufacturer: ""
+      },
+      YouView: {
+        model: "YouView",
+        manufacturer: "YouView"
+      },
+      Roku: {
+        model: "Roku",
+        manufacturer: "Roku"
+      }
+    };
 
     SwaggerUi.prototype.initialize = function(options) {
       var _this = this;
@@ -1325,6 +1340,25 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       return _ref2;
     }
 
+    MainView.prototype.events = {
+      'change #deviceList': 'changeDevice'
+    };
+
+    MainView.prototype.devices = {
+      Web: {
+        model: "",
+        manufacturer: ""
+      },
+      YouView: {
+        model: "YouView",
+        manufacturer: "YouView"
+      },
+      Roku: {
+        model: "Roku",
+        manufacturer: "Roku"
+      }
+    };
+
     MainView.prototype.initialize = function() {};
 
     MainView.prototype.render = function() {
@@ -1351,6 +1385,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     MainView.prototype.clear = function() {
       return $(this.el).html('');
+    };
+
+    MainView.prototype.changeDevice = function(e) {
+      var device;
+      device = e.target.value;
+      device = this.devices[device];
+      console.log(device);
+      $("#deviceModel").val(device.model);
+      return $("#deviceManufacturer").val(device.manufacturer);
     };
 
     return MainView;
@@ -1642,7 +1685,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     };
 
     OperationView.prototype.showStatus = function(data) {
-      var code, content, contentType, headers, pre, response_body;
+      var code, content, contentType, error, headers, pre, response_body;
       content = data.content.data;
       headers = data.getHeaders();
       contentType = headers["Content-Type"];
@@ -1650,8 +1693,14 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         code = $('<code />').text("no content");
         pre = $('<pre class="json" />').append(code);
       } else if (contentType.indexOf("application/json") === 0) {
-        code = $('<code />').text(JSON.stringify(JSON.parse(content), null, 2));
-        pre = $('<pre class="json" />').append(code);
+        try {
+          code = $('<code />').text(JSON.stringify(JSON.parse(content), null, 2));
+          pre = $('<pre class="json" />').append(code);
+        } catch (_error) {
+          error = _error;
+          code = $('<code />').text(this.formatXml(content));
+          pre = $('<pre class="xml" />').append(code);
+        }
       } else if (contentType.indexOf("application/xml") === 0) {
         code = $('<code />').text(this.formatXml(content));
         pre = $('<pre class="xml" />').append(code);
@@ -1663,14 +1712,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         pre = $('<pre class="json" />').append(code);
       }
       response_body = pre;
-      $(".request_url").html("<pre>" + data.request.url + "</pre>");
+      $(".request_url", $(this.el)).html("<pre>" + data.request.url + "</pre>");
       $(".response_code", $(this.el)).html("<pre>" + data.status + "</pre>");
       $(".response_body", $(this.el)).html(response_body);
       $(".response_headers", $(this.el)).html("<pre>" + JSON.stringify(data.getHeaders()) + "</pre>");
       $(".response", $(this.el)).slideDown();
       $(".response_hider", $(this.el)).show();
       $(".response_throbber", $(this.el)).hide();
-      return hljs.highlightBlock($('.response_body', $(this.el))[0]);
+      hljs.highlightBlock($('.response_body', $(this.el))[0]);
+      return sky.extensions.addAnchors($('.response_body', $(this.el)).find("pre"));
     };
 
     OperationView.prototype.toggleOperationContent = function() {

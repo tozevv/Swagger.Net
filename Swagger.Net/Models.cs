@@ -10,6 +10,7 @@ namespace Swagger.Net
     {
         public string Name { get; set; }
         public object Items { get; set; }
+        public Type type { get; set; }
     }
 
     public class ResponseMessage
