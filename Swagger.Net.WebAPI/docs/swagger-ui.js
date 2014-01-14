@@ -235,21 +235,21 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, stack2;
-  buffer += "\n    <div class=\"info_title\">"
+  buffer += "\r\n    <div class=\"info_title\">"
     + escapeExpression(((stack1 = ((stack1 = depth0.info),stack1 == null || stack1 === false ? stack1 : stack1.title)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "</div>\n    <div class=\"info_description\">";
+    + "</div>\r\n    <div class=\"info_description\">";
   stack2 = ((stack1 = ((stack1 = depth0.info),stack1 == null || stack1 === false ? stack1 : stack1.description)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1);
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "</div>\n    ";
+  buffer += "</div>\r\n    ";
   stack2 = helpers['if'].call(depth0, ((stack1 = depth0.info),stack1 == null || stack1 === false ? stack1 : stack1.termsOfServiceUrl), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n    ";
+  buffer += "\r\n    ";
   stack2 = helpers['if'].call(depth0, ((stack1 = depth0.info),stack1 == null || stack1 === false ? stack1 : stack1.contact), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n    ";
+  buffer += "\r\n    ";
   stack2 = helpers['if'].call(depth0, ((stack1 = depth0.info),stack1 == null || stack1 === false ? stack1 : stack1.license), {hash:{},inverse:self.noop,fn:self.program(6, program6, data),data:data});
   if(stack2 || stack2 === 0) { buffer += stack2; }
-  buffer += "\n  ";
+  buffer += "\r\n  ";
   return buffer;
   }
 function program2(depth0,data) {
@@ -284,25 +284,25 @@ function program6(depth0,data) {
 function program8(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n        , <span style=\"font-variant: small-caps\">api version</span>: ";
+  buffer += "\r\n        , <span style=\"font-variant: small-caps\">api version</span>: ";
   if (stack1 = helpers.apiVersion) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.apiVersion; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "\n        ";
+    + "\r\n        ";
   return buffer;
   }
 
-  buffer += "<div class='info' id='api_info'>\n  ";
+  buffer += "<div class='info' id='api_info'>\r\n  ";
   stack1 = helpers['if'].call(depth0, depth0.info, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</div>\n<div class='container' id='resources_container'>\n    <div class=\"devices\">\n        <div class=\"center\">\n            <span>Set device:&nbsp;</span>\n            <select id=\"deviceList\">   \n                <option val=\"Web\">Web</option>\n                <option val=\"YouView\">YouView</option>\n                <option val=\"Roku\">Roku</option>\n            </select>\n            <input type=\"text\" id=\"deviceId\" placeholder=\"id\" />\n\n            <input type=\"text\" id=\"deviceModel\" placeholder=\"model\" />\n\n            <input type=\"text\" id=\"deviceManufacturer\" placeholder=\"manufacturer\" />\n        </div>\n    </div>\n    <ul id='resources'>\n    </ul>\n\n    <div class=\"footer\">\n        <br>\n        <br>\n        <h4 style=\"color: #999\">[ <span style=\"font-variant: small-caps\">base url</span>: ";
+  buffer += "\r\n</div>\r\n<div class='container' id='resources_container'>\r\n    <div class=\"devices\">\r\n        <div class=\"center\">\r\n            <span>Set device:&nbsp;</span>\r\n            <select id=\"deviceList\">   \r\n                <option val=\"Web\">Web</option>\r\n                <option val=\"YouView\">YouView</option>\r\n                <option val=\"Roku\">Roku</option>\r\n            </select>\r\n            <input type=\"text\" id=\"deviceId\" placeholder=\"id\" />\r\n\r\n            <input type=\"text\" id=\"deviceModel\" placeholder=\"model\" />\r\n\r\n            <input type=\"text\" id=\"deviceManufacturer\" placeholder=\"manufacturer\" />\r\n        </div>\r\n    </div>\r\n    <ul id='resources'>\r\n    </ul>\r\n\r\n    <div class=\"footer\">\r\n        <br>\r\n        <br>\r\n        <h4 style=\"color: #999\">[ <span style=\"font-variant: small-caps\">base url</span>: ";
   if (stack1 = helpers.basePath) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.basePath; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "\n        ";
+    + "\r\n        ";
   stack1 = helpers['if'].call(depth0, depth0.apiVersion, {hash:{},inverse:self.noop,fn:self.program(8, program8, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "]</h4>\n    </div>\n</div>\n";
+  buffer += "]</h4>\r\n    </div>\r\n</div>\r\n";
   return buffer;
   });
 })();
@@ -328,7 +328,7 @@ function program1(depth0,data) {
 function program3(depth0,data) {
   
   
-  return "\n          <h4>Response Class</h4>\n          <p><span class=\"model-signature\" /></p>\n          <br/>\n          <div class=\"response-content-type\" />\n        ";
+  return "\n          <h4>Response Class</h4>\n          <p><span class=\"model-signature\" /></p>\n          <br/>\n          <div class=\"response-content-type\" />\n\n        ";
   }
 
 function program5(depth0,data) {
@@ -451,7 +451,7 @@ function program11(depth0,data) {
   if (stack1 = helpers.number) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.number; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "_content' style='display:none'>\n        ";
+    + "_content' style='display:none'>\n       \n        ";
   stack1 = helpers['if'].call(depth0, depth0.notes, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        ";
@@ -460,7 +460,7 @@ function program11(depth0,data) {
   buffer += "\n        <form accept-charset='UTF-8' class='sandbox'>\n          <div style='margin:0;padding:0;display:inline'></div>\n          ";
   stack1 = helpers['if'].call(depth0, depth0.parameters, {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n          ";
+  buffer += "\n           <h4>Mock profile</h4>\n          <input name=\"mockprofile\" type=\"text\" placeholder=\"mock profile\" />\n          ";
   stack1 = helpers['if'].call(depth0, depth0.responseMessages, {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n          ";
@@ -1053,35 +1053,35 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n  ";
+  buffer += "\r\n  ";
   stack1 = helpers.each.call(depth0, depth0.produces, {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n";
+  buffer += "\r\n";
   return buffer;
   }
 function program2(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n  <option value=\"";
+  buffer += "\r\n  <option value=\"";
   stack1 = (typeof depth0 === functionType ? depth0.apply(depth0) : depth0);
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\">";
   stack1 = (typeof depth0 === functionType ? depth0.apply(depth0) : depth0);
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "</option>\n  ";
+  buffer += "</option>\r\n  ";
   return buffer;
   }
 
 function program4(depth0,data) {
   
   
-  return "\n  <option value=\"application/json\">application/json</option>\n  <option value=\"text/xml\">text/xml</option>\n  <option value=\"text/javascript\">jsonp</option>\n";
+  return "\r\n  <option value=\"application/json\">application/json</option>\r\n  <option value=\"text/xml\">text/xml</option>\r\n  <option value=\"text/javascript\">jsonp</option>\r\n";
   }
 
-  buffer += "<label for=\"responseContentType\"></label>\n<select name=\"responseContentType\">\n";
+  buffer += "<label for=\"responseContentType\"></label>\r\n<select name=\"responseContentType\">\r\n";
   stack1 = helpers['if'].call(depth0, depth0.produces, {hash:{},inverse:self.program(4, program4, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</select>\n";
+  buffer += "\r\n</select>\r\n";
   return buffer;
   });
 })();
@@ -1712,7 +1712,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         pre = $('<pre class="json" />').append(code);
       }
       response_body = pre;
-      $(".request_url", $(this.el)).html("<pre>" + data.request.url + "</pre>");
+      $(".request_url", $(this.el)).html("<pre><a href='" + data.request.url + "' target='_blank'>" + data.request.url + "</a></pre>");
       $(".response_code", $(this.el)).html("<pre>" + data.status + "</pre>");
       $(".response_body", $(this.el)).html(response_body);
       $(".response_headers", $(this.el)).html("<pre>" + JSON.stringify(data.getHeaders()) + "</pre>");

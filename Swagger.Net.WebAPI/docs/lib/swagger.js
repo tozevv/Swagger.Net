@@ -763,7 +763,9 @@
         params.headers["X-API-Device-Model"] =  $("#deviceModel").val() || "";
       if( $("#deviceManufacturer").val() != "" )
         params.headers["X-API-Device-Manufacturer"] =  $("#deviceManufacturer").val() || "";
-
+      if( args.mockprofile != undefined && args.mockprofile.length > 0)
+        params.headers["X-API-MOCKPROFILE"] =  args.mockprofile || ""; 
+        
       if (args.body != null) {
         params.body = args.body;
         delete args.body;
@@ -930,7 +932,7 @@
       body = params.body;
       parent = params["parent"];
       requestContentType = "application/json";
-      if (body && (this.type === "POST" || this.type === "PUT" || this.type === "PATCH")) {
+      if (body && (this.type === "POST" || this.type === "PUT" || this.type === "DELETE" || this.type === "PATCH")) {
         if (this.opts.requestContentType) {
           requestContentType = this.opts.requestContentType;
         }
@@ -1045,7 +1047,13 @@
         myHeaders["Accept"] = responseContentType;
       }
       if (!((headers != null) && (headers.mock != null))) {
+        var regex = /http(s)?:\/\//i
+        var hasDomain = regex.test(this.url);
+        if(!hasDomain)
+          this.url = location.protocol + "//" + location.hostname + this.url;
+
         obj = {
+         
           url: this.url,
           method: this.type,
           headers: myHeaders,

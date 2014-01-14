@@ -41,13 +41,13 @@
       supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
       apiKey : api_key,
       onComplete: function(swaggerApi, swaggerUi){
-
+       
         $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
 
         var options = "";
 
-		//Go through apisources and add them to select
-    $("#api_source").append("<option val='"+swaggerApi.url+"'>"+swaggerApi.url+"</option>");
+		//Go through apisources and add them to select    
+    $("#api_source").append("<option val='"+location.protocol +"//"+location.host +"/api/swagger'>Root</option>");
     if(swaggerApi.apiSources){
       var total = swaggerApi.apiSources.length -1, i = 0 ;
       while(i <= total)

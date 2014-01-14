@@ -21,12 +21,12 @@ namespace Swagger.Net
         public static readonly Regex RegexBoolean = new Regex("bool", RegexOptions.IgnoreCase);
         public static readonly Regex RegexArray = new Regex("ienumerable|isortablelist", RegexOptions.IgnoreCase);
         public static readonly Regex RegexRecursiveTypes = new Regex("task`1|nullable`1", RegexOptions.IgnoreCase);
-        public static readonly Regex RegexArrayTypes = new Regex(@"\[\]|ienumerable|isorteablelist",RegexOptions.IgnoreCase);
-        public static readonly Regex RegexMetadataTypes = new Regex("metadata`1|pagedmetadata`1|actionsmetadata`1",RegexOptions.IgnoreCase);
+        public static readonly Regex RegexArrayTypes = new Regex(@"\[\]|ienumerable|isorteablelist", RegexOptions.IgnoreCase);
+        public static readonly Regex RegexMetadataTypes = new Regex("metadata`1|pagedmetadata`1|actionsmetadata`1", RegexOptions.IgnoreCase);
 
         private static readonly string[] IgnoreTypes = new[] { "void", "object", "string", "bool" };
-       
-      
+
+
         public static string ServerPath
         {
             get
@@ -36,7 +36,7 @@ namespace Swagger.Net
                     _serverPath = HostingEnvironment.MapPath("~");
                 }
                 return _serverPath;
-            }   
+            }
         }
 
 
@@ -110,7 +110,7 @@ namespace Swagger.Net
                             //If declaring type is Metadata, or derived,  get the generic type
                             if (RegexMetadataTypes.IsMatch(propertyInfo.ReflectedType.Name))
                             {
-                                if(propertyInfo.Name == "Content")
+                                if (propertyInfo.Name == "Content")
                                     propType = propertyInfo.ReflectedType.GetGenericArguments().First();
                                 else
                                 {
@@ -123,7 +123,7 @@ namespace Swagger.Net
                                             propType = Type.GetType("BSkyB.SuperMam.Web.Common.Messages.ActionsMeta, SuperMam.Web.Common") ?? docProvider.GetType(propertyInfo);
                                             break;
                                         default:
-                                            propType =  docProvider.GetType(propertyInfo);
+                                            propType = docProvider.GetType(propertyInfo);
                                             break;
                                     }
                                 }
@@ -205,7 +205,7 @@ namespace Swagger.Net
                 }
                 else
                 {
-                    name =  type.GetGenericArguments().First().Name;
+                    name = type.GetGenericArguments().First().Name;
                 }
             }
 
@@ -220,43 +220,33 @@ namespace Swagger.Net
                     (type.IsClass || type.IsInterface || type.IsEnum || type.IsArray) || (type.IsGenericType && !type.GetGenericArguments().First().IsPrimitive)
                 );
         }
-        private static string TranslateType(string type)
-        {
-            if (RegexInteger.IsMatch(type))
-                return "integer";
-            if (RegexString.IsMatch(type))
-                return "string";
-            if (RegexDateTime.IsMatch(type))
-                return "date-time";
-            if (RegexBoolean.IsMatch(type))
-                return "boolean";
-            if (RegexArray.IsMatch(type))
-                return "array";
-
-            return type;
-        }
-
-        private static bool IsPropertyACollection(PropertyInfo property)
-        {
-            return property.PropertyType.GetInterface(typeof(IEnumerable<>).FullName) != null;
-        }
-
+        
         public static ApiSource[] GetApiSources(HttpControllerContext controllerContext)
         {
             var apiAction = ConfigurationManager.AppSettings["SwaggerApiActionForSwaggerFiles"] ?? "";
             var dir = ConfigurationManager.AppSettings["SwaggerApiSourceDir"] ?? Path.Combine("docs", "apiSources");
             var fullPath = Path.Combine(ServerPath, dir);
             string serverPhysicalPath = HostingEnvironment.ApplicationPhysicalPath;
-            var sourcesList = Directory.GetDirectories(fullPath).Select(_dir =>
+            var dirs = Directory.GetDirectories(fullPath);
+            if (!dirs.Any())
+            {
+                return null;
+            }
+
+            var sourcesList = dirs.Select(_dir =>
                 {
-                    var file = Directory.GetFiles(_dir, "base.json").First();
-                    return new ApiSource(
-                        Path.GetFileName(_dir),
-                        String.Format("{0}?filePath={1}",apiAction, file.Replace(serverPhysicalPath, @""))
-                        );
+                    var file = Directory.GetFiles(_dir, "base.json").FirstOrDefault();
+                    if (file != null)
+                    {
+                        return new ApiSource(
+                            Path.GetFileName(_dir),
+                            String.Format("{0}?filePath={1}", apiAction, file.Replace(serverPhysicalPath, @""))
+                            );
+                    }
+                    return null;
                 });
 
-            return sourcesList.ToArray();
+            return sourcesList.Where(s => s != null).ToArray();
         }
     }
 }

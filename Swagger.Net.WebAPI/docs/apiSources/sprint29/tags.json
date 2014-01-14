@@ -1,250 +1,728 @@
 ﻿{
-    "produces": [
-        "application/json",
-        "application/xml"
-    ],
-    "apiSources": [],
-    "apiVersion": "4.0.0.0",
-    "swaggerVersion": "2.0",
-    "basePath": "http://localhost:49508",
-    "resourcePath": "Tags",
-    "apis": [
-        {
-            "path": "/api/tags",
-            "description": "Get all of the Tags",
-            "operations": [
-                {
-                    "responseMessages": [
-                        {
-                            "code": 500,
-                            "message": "Internal server errors"
-                        }
-                    ],
-                    "httpMethod": "GET",
-                    "nickname": "Get",
-                    "type": "array",
-                    "items": {
-                        "$ref": "Tag"
-                    },
-                    "summary": "Get all of the Tags",
-                    "notes": "Notes",
-                    "parameters": [
-                        {
-                            "defaultValue": null,
-                            "paramType": "query",
-                            "name": "tagType",
-                            "description": "No Documentation Found.",
-                            "dataType": "TagType",
-                            "required": false,
-                            "allowMultiple": false,
-                            "allowableValues": null,
-                            "enum": [
-                                "Normal",
-                                "Complex",
-                                "NotDefined"
-                            ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "path": "/api/tags/{id}",
-            "description": "What it does",
-            "operations": [
-                {
-                    "responseMessages": [
-                        {
-                            "code": 401,
-                            "message": "Not authorized"
-                        },
-                        {
-                            "code": 400,
-                            "message": "Bad request"
-                        }
-                    ],
-                    "httpMethod": "GET",
-                    "nickname": "GetById",
-                    "type": "Tag",
-                    "items": null,
-                    "summary": "What it does",
-                    "notes": "Implementation Notes",
-                    "parameters": [
-                        {
-                            "defaultValue": "12312312",
-                            "paramType": "path",
-                            "name": "id",
-                            "description": "The id.",
-                            "dataType": "Int32",
-                            "required": true,
-                            "allowMultiple": false,
-                            "allowableValues": null,
-                            "enum": null
-                        },
-                        {
-                            "defaultValue": null,
-                            "paramType": "query",
-                            "name": "tagType",
-                            "description": "No Documentation Found.",
-                            "dataType": "TagType",
-                            "required": false,
-                            "allowMultiple": false,
-                            "allowableValues": null,
-                            "enum": [
-                                "Normal",
-                                "Complex",
-                                "NotDefined"
-                            ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "path": "/api/tags",
-            "description": "Create a new Tag",
-            "operations": [
-                {
-                    "responseMessages": null,
-                    "httpMethod": "POST",
-                    "nickname": "Post",
-                    "type": "Void",
-                    "items": null,
-                    "summary": "Create a new Tag",
-                    "notes": "No Documentation Found.",
-                    "parameters": [
-                        {
-                            "defaultValue": "",
-                            "paramType": "body",
-                            "name": "value",
-                            "description": "",
-                            "dataType": "String",
-                            "required": true,
-                            "allowMultiple": false,
-                            "allowableValues": null,
-                            "enum": null
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "path": "/api/tags/{id}",
-            "description": "Update a Tag by it's id",
-            "operations": [
-                {
-                    "responseMessages": null,
-                    "httpMethod": "PUT",
-                    "nickname": "Put",
-                    "type": "Void",
-                    "items": null,
-                    "summary": "Update a Tag by it's id",
-                    "notes": "No Documentation Found.",
-                    "parameters": [
-                        {
-                            "defaultValue": "",
-                            "paramType": "path",
-                            "name": "id",
-                            "description": "",
-                            "dataType": "Int32",
-                            "required": true,
-                            "allowMultiple": false,
-                            "allowableValues": null,
-                            "enum": null
-                        },
-                        {
-                            "defaultValue": "",
-                            "paramType": "body",
-                            "name": "value",
-                            "description": "",
-                            "dataType": "String",
-                            "required": true,
-                            "allowMultiple": false,
-                            "allowableValues": null,
-                            "enum": null
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "path": "/api/tags/{id}",
-            "description": "Remove a Tag by it's id",
-            "operations": [
-                {
-                    "responseMessages": null,
-                    "httpMethod": "DELETE",
-                    "nickname": "Delete",
-                    "type": "Void",
-                    "items": null,
-                    "summary": "Remove a Tag by it's id",
-                    "notes": "No Documentation Found.",
-                    "parameters": [
-                        {
-                            "defaultValue": "",
-                            "paramType": "path",
-                            "name": "id",
-                            "description": "",
-                            "dataType": "Int32",
-                            "required": true,
-                            "allowMultiple": false,
-                            "allowableValues": null,
-                            "enum": null
-                        }
-                    ]
-                }
-            ]
-        }
-    ],
-    "models": {
-        "Tag": {
-            "id": "Tag",
-            "properties": {
-                "name": {
-                    "type": "string",
-                    "format": null,
-                    "description": null,
-                    "required": null,
-                    "enum": null,
-                    "items": null
-                },
-                "description": {
-                    "type": "string",
-                    "format": null,
-                    "description": null,
-                    "required": null,
-                    "enum": null,
-                    "items": null
-                },
-                "value": {
-                    "type": "integer",
-                    "format": null,
-                    "description": null,
-                    "required": null,
-                    "enum": null,
-                    "items": null
-                },
-                "type": {
-                    "type": "TagType",
-                    "format": null,
-                    "description": null,
-                    "required": null,
-                    "enum": [
-                        "Normal",
-                        "Complex",
-                        "NotDefined"
-                    ],
-                    "items": null
-                },
-                "rating": {
-                    "type": "Rating",
-                    "format": null,
-                    "description": null,
-                    "required": null,
-                    "enum": null,
-                    "items": null
-                }
-            }
-        }
-    }
+produces: null,
+apiSources: [
+{
+path: "home/swaggerfile?filePath=docs\apiSources\sprint29\base.json",
+name: "sprint29"
+},
+{
+path: "home/swaggerfile?filePath=docs\apiSources\sprint30\base.json",
+name: "sprint30"
+}
+],
+apiVersion: "4.0.0.0",
+swaggerVersion: "2.0",
+basePath: "http://localhost:49508",
+resourcePath: "Tags",
+apis: [
+{
+path: "/api/tags?xpto={xpto}",
+description: "No Documentation Found.",
+operations: [
+{
+responseMessages: null,
+typeJson: null,
+httpMethod: "GET",
+nickname: "GetXPTO",
+type: "metadata<boolean>",
+items: null,
+summary: "No Documentation Found.",
+notes: "No Documentation Found.",
+parameters: [
+{
+defaultValue: null,
+paramType: "path",
+name: "xpto",
+description: "No Documentation Found.",
+dataType: "String",
+required: true,
+allowMultiple: false,
+allowableValues: null,
+enum: null
+}
+],
+consumes: [
+"application/x-www-form-urlencoded",
+"application/json",
+"text/xml"
+]
+}
+]
+},
+{
+path: "/api/tags/{id}",
+description: "What it does",
+operations: [
+{
+responseMessages: [
+{
+code: 401,
+message: "Not authorized"
+},
+{
+code: 400,
+message: "Bad request"
+}
+],
+typeJson: null,
+httpMethod: "GET",
+nickname: "GetById",
+type: "actionsmetadata<tag>",
+items: null,
+summary: "What it does",
+notes: "Implementation Notes",
+parameters: [
+{
+defaultValue: "12312312",
+paramType: "path",
+name: "id",
+description: "The id.",
+dataType: "Int32",
+required: true,
+allowMultiple: false,
+allowableValues: null,
+enum: null
+},
+{
+defaultValue: null,
+paramType: "query",
+name: "tagType",
+description: "No Documentation Found.",
+dataType: "TagType",
+required: false,
+allowMultiple: false,
+allowableValues: null,
+enum: [
+"Normal",
+"Complex",
+"NotDefined"
+]
+}
+],
+consumes: [
+"application/x-www-form-urlencoded",
+"application/json",
+"text/xml"
+]
+}
+]
+},
+{
+path: "/api/tags",
+description: "Create a new Tag",
+operations: [
+{
+responseMessages: null,
+typeJson: null,
+httpMethod: "POST",
+nickname: "Post",
+type: "void",
+items: null,
+summary: "Create a new Tag",
+notes: "No Documentation Found.",
+parameters: [
+{
+defaultValue: "xxx",
+paramType: "body",
+name: "value",
+description: "",
+dataType: "String",
+required: true,
+allowMultiple: false,
+allowableValues: null,
+enum: null
+}
+],
+consumes: [
+"application/x-www-form-urlencoded",
+"application/json",
+"text/xml"
+]
+}
+]
+},
+{
+path: "/api/tags/{id}",
+description: "Remove a Tag by it's id",
+operations: [
+{
+responseMessages: null,
+typeJson: null,
+httpMethod: "DELETE",
+nickname: "Delete",
+type: "void",
+items: null,
+summary: "Remove a Tag by it's id",
+notes: "No Documentation Found.",
+parameters: [
+{
+defaultValue: "",
+paramType: "path",
+name: "id",
+description: "",
+dataType: "Int32",
+required: true,
+allowMultiple: false,
+allowableValues: null,
+enum: null
+}
+],
+consumes: [
+"application/x-www-form-urlencoded",
+"application/json",
+"text/xml"
+]
+}
+]
+},
+{
+path: "/tags/get",
+description: "Get all of the Tags",
+operations: [
+{
+responseMessages: [
+{
+code: 500,
+message: "Internal server errors"
+}
+],
+typeJson: null,
+httpMethod: "GET",
+nickname: "Get",
+type: "metadata<tag>",
+items: null,
+summary: "Get all of the Tags",
+notes: "Notes",
+parameters: [
+{
+defaultValue: null,
+paramType: "query",
+name: "tagType",
+description: "No Documentation Found.",
+dataType: "TagType",
+required: false,
+allowMultiple: false,
+allowableValues: null,
+enum: [
+"Normal",
+"Complex",
+"NotDefined"
+]
+}
+],
+consumes: [
+"application/x-www-form-urlencoded",
+"application/json",
+"text/xml"
+]
+}
+]
+},
+{
+path: "/tags/getxpto?xpto={xpto}",
+description: "No Documentation Found.",
+operations: [
+{
+responseMessages: null,
+typeJson: null,
+httpMethod: "GET",
+nickname: "GetXPTO",
+type: "metadata<boolean>",
+items: null,
+summary: "No Documentation Found.",
+notes: "No Documentation Found.",
+parameters: [
+{
+defaultValue: null,
+paramType: "path",
+name: "xpto",
+description: "No Documentation Found.",
+dataType: "String",
+required: true,
+allowMultiple: false,
+allowableValues: null,
+enum: null
+}
+],
+consumes: [
+"application/x-www-form-urlencoded",
+"application/json",
+"text/xml"
+]
+}
+]
+},
+{
+path: "/tags/gettask",
+description: "Gets the task.",
+operations: [
+{
+responseMessages: null,
+typeJson: null,
+httpMethod: "GET",
+nickname: "GetTask",
+type: "pagedmetadata<tag>",
+items: null,
+summary: "Gets the task.",
+notes: "No Documentation Found.",
+parameters: [ ],
+consumes: [
+"application/x-www-form-urlencoded",
+"application/json",
+"text/xml"
+]
+}
+]
+},
+{
+path: "/tags/getbyid/{id}",
+description: "What it does",
+operations: [
+{
+responseMessages: [
+{
+code: 401,
+message: "Not authorized"
+},
+{
+code: 400,
+message: "Bad request"
+}
+],
+typeJson: null,
+httpMethod: "GET",
+nickname: "GetById",
+type: "actionsmetadata<tag>",
+items: null,
+summary: "What it does",
+notes: "Implementation Notes",
+parameters: [
+{
+defaultValue: "12312312",
+paramType: "path",
+name: "id",
+description: "The id.",
+dataType: "Int32",
+required: true,
+allowMultiple: false,
+allowableValues: null,
+enum: null
+},
+{
+defaultValue: null,
+paramType: "query",
+name: "tagType",
+description: "No Documentation Found.",
+dataType: "TagType",
+required: false,
+allowMultiple: false,
+allowableValues: null,
+enum: [
+"Normal",
+"Complex",
+"NotDefined"
+]
+}
+],
+consumes: [
+"application/x-www-form-urlencoded",
+"application/json",
+"text/xml"
+]
+}
+]
+},
+{
+path: "/tags/post",
+description: "Create a new Tag",
+operations: [
+{
+responseMessages: null,
+typeJson: null,
+httpMethod: "POST",
+nickname: "Post",
+type: "void",
+items: null,
+summary: "Create a new Tag",
+notes: "No Documentation Found.",
+parameters: [
+{
+defaultValue: "xxx",
+paramType: "body",
+name: "value",
+description: "",
+dataType: "String",
+required: true,
+allowMultiple: false,
+allowableValues: null,
+enum: null
+}
+],
+consumes: [
+"application/x-www-form-urlencoded",
+"application/json",
+"text/xml"
+]
+}
+]
+},
+{
+path: "/tags/delete/{id}",
+description: "Remove a Tag by it's id",
+operations: [
+{
+responseMessages: null,
+typeJson: null,
+httpMethod: "DELETE",
+nickname: "Delete",
+type: "void",
+items: null,
+summary: "Remove a Tag by it's id",
+notes: "No Documentation Found.",
+parameters: [
+{
+defaultValue: "",
+paramType: "path",
+name: "id",
+description: "",
+dataType: "Int32",
+required: true,
+allowMultiple: false,
+allowableValues: null,
+enum: null
+}
+],
+consumes: [
+"application/x-www-form-urlencoded",
+"application/json",
+"text/xml"
+]
+}
+]
+}
+],
+models: {
+metadata<tag>: {
+values: null,
+id: "metadata<tag>",
+description: null,
+properties: {
+Content: {
+allowableValues: null,
+type: "array",
+format: null,
+description: " Gets or sets the content. ",
+required: false,
+enum: null,
+items: {
+$ref: "tag"
+}
+},
+Meta: {
+allowableValues: null,
+type: "metabase",
+format: null,
+description: " Gets or sets the meta. ",
+required: false,
+enum: null,
+items: null
+}
+}
+},
+rating: {
+values: null,
+id: "rating",
+description: null,
+properties: {
+Name: {
+allowableValues: null,
+type: "string",
+format: null,
+description: null,
+required: false,
+enum: null,
+items: null
+},
+CreateDate: {
+allowableValues: null,
+type: "datetime",
+format: null,
+description: null,
+required: false,
+enum: null,
+items: null
+},
+Tag: {
+allowableValues: null,
+type: "extendendtag",
+format: null,
+description: " Gets or sets the tag. ",
+required: false,
+enum: null,
+items: null
+}
+}
+},
+metabase: {
+values: null,
+id: "metabase",
+description: " Base metadata for responses ",
+properties: {
+HttpCode: {
+allowableValues: null,
+type: "int32",
+format: null,
+description: " Serves as placeholder for the response pipeline. Content in here will be placed in Metadata.Content ",
+required: false,
+enum: null,
+items: null
+},
+Message: {
+allowableValues: null,
+type: "object",
+format: null,
+description: null,
+required: false,
+enum: null,
+items: null
+}
+}
+},
+pagedmetadata<tag>: {
+values: null,
+id: "pagedmetadata<tag>",
+description: null,
+properties: {
+Content: {
+allowableValues: null,
+type: "array",
+format: null,
+description: " Gets or sets the content. ",
+required: false,
+enum: null,
+items: {
+$ref: "tag"
+}
+},
+Meta: {
+allowableValues: null,
+type: "metabase",
+format: null,
+description: " Gets or sets the meta. ",
+required: false,
+enum: null,
+items: null
+}
+}
+},
+httpresponsemessage: {
+values: null,
+id: "httpresponsemessage",
+description: null,
+properties: null
+},
+tagtype: {
+values: [
+"Normal",
+"Complex",
+"NotDefined"
+],
+id: "tagtype",
+description: null,
+properties: { }
+},
+tag: {
+values: null,
+id: "tag",
+description: " Tag Summary ",
+properties: {
+CustomName: {
+allowableValues: null,
+type: "string",
+format: null,
+description: null,
+required: false,
+enum: null,
+items: null
+},
+Description: {
+allowableValues: null,
+type: "string",
+format: null,
+description: null,
+required: false,
+enum: null,
+items: null
+},
+Value: {
+allowableValues: null,
+type: "int32",
+format: null,
+description: null,
+required: false,
+enum: null,
+items: null
+},
+Type: {
+allowableValues: null,
+type: "tagtype",
+format: null,
+description: null,
+required: false,
+enum: [
+"Normal",
+"Complex",
+"NotDefined"
+],
+items: null
+},
+Rating: {
+allowableValues: null,
+type: "rating",
+format: null,
+description: " Gets or sets the rating. ",
+required: false,
+enum: null,
+items: null
+},
+OldRatings: {
+allowableValues: null,
+type: "array",
+format: null,
+description: " Gets or sets the old ratings. ",
+required: false,
+enum: null,
+items: {
+$ref: "rating"
+}
+}
+}
+},
+actionsmetadata<tag>: {
+values: null,
+id: "actionsmetadata<tag>",
+description: null,
+properties: {
+Content: {
+allowableValues: null,
+type: "tag",
+format: null,
+description: " Gets or sets the content. ",
+required: false,
+enum: null,
+items: null
+},
+Meta: {
+allowableValues: null,
+type: "metabase",
+format: null,
+description: " Gets or sets the meta. ",
+required: false,
+enum: null,
+items: null
+}
+}
+},
+metadata<boolean>: {
+values: null,
+id: "metadata<boolean>",
+description: null,
+properties: {
+Content: {
+allowableValues: null,
+type: "boolean",
+format: null,
+description: " Gets or sets the content. ",
+required: false,
+enum: null,
+items: null
+},
+Meta: {
+allowableValues: null,
+type: "metabase",
+format: null,
+description: " Gets or sets the meta. ",
+required: false,
+enum: null,
+items: null
+}
+}
+},
+extendendtag: {
+values: null,
+id: "extendendtag",
+description: null,
+properties: {
+NewProperty: {
+allowableValues: null,
+type: "string",
+format: null,
+description: null,
+required: false,
+enum: null,
+items: null
+},
+CustomName: {
+allowableValues: null,
+type: "string",
+format: null,
+description: null,
+required: false,
+enum: null,
+items: null
+},
+Description: {
+allowableValues: null,
+type: "string",
+format: null,
+description: null,
+required: false,
+enum: null,
+items: null
+},
+Value: {
+allowableValues: null,
+type: "int32",
+format: null,
+description: null,
+required: false,
+enum: null,
+items: null
+},
+Type: {
+allowableValues: null,
+type: "tagtype",
+format: null,
+description: null,
+required: false,
+enum: [
+"Normal",
+"Complex",
+"NotDefined"
+],
+items: null
+},
+Rating: {
+allowableValues: null,
+type: "rating",
+format: null,
+description: " Gets or sets the rating. ",
+required: false,
+enum: null,
+items: null
+},
+OldRatings: {
+allowableValues: null,
+type: "array",
+format: null,
+description: " Gets or sets the old ratings. ",
+required: false,
+enum: null,
+items: {
+$ref: "rating"
+}
+}
+}
+}
+}
 }
