@@ -87,7 +87,6 @@ namespace Swagger.Net
             return null;
         }
 
-        [Obsolete("For web api 1")]
         public virtual string GetDocumentation(HttpActionDescriptor actionDescriptor)
         {
             XPathNavigator memberNode = GetMemberNode(actionDescriptor);
