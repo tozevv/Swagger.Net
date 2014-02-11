@@ -22,7 +22,6 @@ namespace Swagger.Net
         public static readonly Regex RegexArray = new Regex("ienumerable|isortablelist", RegexOptions.IgnoreCase);
         public static readonly Regex RegexRecursiveTypes = new Regex("task`1|nullable`1", RegexOptions.IgnoreCase);
         public static readonly Regex RegexArrayTypes = new Regex(@"\[\]|ienumerable|isorteablelist", RegexOptions.IgnoreCase);
-        public static readonly Regex RegexMetadataTypes = new Regex("metadata`1|pagedmetadata`1|actionsmetadata`1", RegexOptions.IgnoreCase);
 
         private static readonly string[] IgnoreTypes = new[] { "void", "object", "string", "bool" };
 
@@ -80,94 +79,64 @@ namespace Swagger.Net
             var _type = type;
             if (type.IsArray)
                 _type = type.GetElementType();
-            else if (type.IsGenericType && !RegexMetadataTypes.IsMatch(_type.Name.ToLower()))
+            else if (type.IsGenericType)
                 _type = type.GetGenericArguments().First();
 
             string typeName = GetTypeName(_type);
 
-            if (models.All(m => m.Key != typeName))
+            if (models.Any(m => m.Key == typeName)) return;
+            
+            if (IsOutputable(_type))
             {
-                if (IsOutputable(_type))
+                var typeInfo = new TypeInfo { id = typeName };
+                if (!IgnoreTypes.Contains(_type.Name.ToLower()))
                 {
-                    var typeInfo = new TypeInfo { id = typeName };
-                    if (!IgnoreTypes.Contains(_type.Name.ToLower()))
+                    typeInfo.description = docProvider.GetSummary(_type);
+                }
+                //Ignore properties for .net types
+                if (!_type.Assembly.FullName.Contains("System") && !_type.Assembly.FullName.Contains("mscorlib"))
+                {
+                    var modelInfoDic = new Dictionary<string, PropInfo>();
+                    foreach (var propertyInfo in _type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
                     {
-                        typeInfo.description = docProvider.GetSummary(_type);
-                    }
-                    //Ignore properties for .net types
-                    if (!_type.Assembly.FullName.Contains("System") && !_type.Assembly.FullName.Contains("mscorlib"))
-                    {
-                        var modelInfoDic = new Dictionary<string, PropInfo>();
-                        foreach (var propertyInfo in _type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                        if (propertyInfo.GetCustomAttributes(typeof(JsonIgnoreAttribute), false).FirstOrDefault() != null)
+                            continue;
+
+                        var propInfo = new PropInfo();
+
+                        string propName = GetPropertyName(propertyInfo);
+                        Type propType = docProvider.GetType(propertyInfo);
+                        SwaggerType swaggerType = GetSwaggerType(propType);
+                        propInfo.type = swaggerType.Name;
+                        propInfo.items = swaggerType.Items;
+                        propInfo.required = IsRequired(propertyInfo, docProvider);
+
+
+                        if (!modelInfoDic.Keys.Contains(propName))
+                            modelInfoDic.Add(propName, propInfo);
+
+                        if (!IgnoreTypes.Contains(propInfo.type))
                         {
-                            if (propertyInfo.GetCustomAttributes(typeof(JsonIgnoreAttribute), false).FirstOrDefault() != null)
-                                continue;
-
-                            var propInfo = new PropInfo();
-
-                            string propName = GetPropertyName(propertyInfo);
-                            Type propType;
-                            //If declaring type is Metadata, or derived,  get the generic type
-                            if (RegexMetadataTypes.IsMatch(propertyInfo.ReflectedType.Name))
+                            propInfo.description = docProvider.GetSummary(propertyInfo);
+                            if (propertyInfo.PropertyType.IsEnum)
                             {
-                                if (propertyInfo.Name == "Content")
-                                    propType = propertyInfo.ReflectedType.GetGenericArguments().First();
-                                else
-                                {
-                                    switch (propertyInfo.ReflectedType.Name.ToLower())
-                                    {
-                                        case "pagedmetadata`1":
-                                            propType = Type.GetType("BSkyB.SuperMam.Web.Common.Messages.PagedMeta, SuperMam.Web.Common") ?? docProvider.GetType(propertyInfo);
-                                            break;
-                                        case "actionsmetadata`1":
-                                            propType = Type.GetType("BSkyB.SuperMam.Web.Common.Messages.ActionsMeta, SuperMam.Web.Common") ?? docProvider.GetType(propertyInfo);
-                                            break;
-                                        default:
-                                            propType = docProvider.GetType(propertyInfo);
-                                            break;
-                                    }
-                                }
+                                modelInfoDic[propName].@enum = propertyInfo.PropertyType.GetEnumNames();
                             }
-                            else
+                            //Don't go too deep
+                            if (level < 10)
                             {
-                                propType = docProvider.GetType(propertyInfo);
-                            }
-                            SwaggerType swaggerType = GetSwaggerType(propType);
-                            propInfo.type = swaggerType.Name;
-                            propInfo.items = swaggerType.Items;
-                            propInfo.required = IsRequired(propertyInfo, docProvider);
-
-
-                            if (!modelInfoDic.Keys.Contains(propName))
-                                modelInfoDic.Add(propName, propInfo);
-
-                            if (!IgnoreTypes.Contains(propInfo.type))
-                            {
-                                propInfo.description = docProvider.GetSummary(propertyInfo);
-                                if (propertyInfo.PropertyType.IsEnum)
-                                {
-                                    //propInfo.allowableValues = new AllowableValues()
-                                    //    {
-                                    //        valueType = GetTypeName(propertyInfo.PropertyType)
-                                    //    };
-                                    //propInfo.allowableValues.values = propertyInfo.PropertyType.GetEnumNames();
-                                    modelInfoDic[propName].@enum = propertyInfo.PropertyType.GetEnumNames();
-                                }
-                                if (level < 10)
-                                {
-                                    TryToAddModels(models, swaggerType.type, docProvider, typesToReturn, ++level);
-                                }
+                                TryToAddModels(models, swaggerType.type, docProvider, typesToReturn, ++level);
                             }
                         }
-                        typeInfo.properties = modelInfoDic;
                     }
-                    if (_type.IsEnum)
-                    {
-                        typeInfo.values = _type.GetEnumNames();
-                    }
-
-                    models.TryAdd(typeName, typeInfo);
+                    typeInfo.properties = modelInfoDic;
                 }
+                if (_type.IsEnum)
+                {
+                    typeInfo.values = _type.GetEnumNames();
+                }
+
+                models.TryAdd(typeName, typeInfo);
             }
         }
 
@@ -199,14 +168,7 @@ namespace Swagger.Net
             }
             else if (type.IsGenericType)
             {
-                if (RegexMetadataTypes.IsMatch(name))
-                {
-                    name = String.Format(@"{0}<{1}>", type.Name, GetTypeName(type.GetGenericArguments().First()));
-                }
-                else
-                {
-                    name = type.GetGenericArguments().First().Name;
-                }
+                name = type.GetGenericArguments().First().Name;
             }
 
             return name.ToLower().Replace("`1", "");
@@ -220,7 +182,7 @@ namespace Swagger.Net
                     (type.IsClass || type.IsInterface || type.IsEnum || type.IsArray) || (type.IsGenericType && !type.GetGenericArguments().First().IsPrimitive)
                 );
         }
-        
+
         public static ApiSource[] GetApiSources(HttpControllerContext controllerContext)
         {
             var apiAction = ConfigurationManager.AppSettings["SwaggerApiActionForSwaggerFiles"] ?? "";

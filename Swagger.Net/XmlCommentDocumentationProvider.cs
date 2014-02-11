@@ -135,7 +135,7 @@ namespace Swagger.Net
                     }
                 }
 
-                if (returnType.IsGenericType && !Helper.RegexMetadataTypes.IsMatch(returnType.Name.ToLower()))
+                if (returnType.IsGenericType)
                 {
                     var sb =
                         new StringBuilder(reflectedActionDescriptor.MethodInfo.ReturnParameter.ParameterType.Name);

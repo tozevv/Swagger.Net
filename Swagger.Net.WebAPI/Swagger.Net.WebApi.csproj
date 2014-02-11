@@ -122,16 +122,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\SwaggerAuthorize.cs" />
     <Compile Include="App_Start\SwaggerNet.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\BlogPostsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TagsController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -183,16 +179,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="docs\apiSources\sprint29\base.json" />
+    <Content Include="docs\apiSources\oldRoutes\base.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="docs\apiSources\sprint29\tags.json" />
+    <Content Include="docs\apiSources\oldRoutes\tags.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="docs\apiSources\sprint30\base.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="docs\apiSources\sprint30\tags.json" />
+    <Content Include="docs\apiSources\oldRoutes\home.json" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

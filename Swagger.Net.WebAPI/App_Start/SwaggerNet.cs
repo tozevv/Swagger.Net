@@ -18,12 +18,25 @@ namespace Swagger.Net.WebApi.App_Start
         public static void PreStart()
         {
             SwaggerGen.LowercaseRoutes = true;
+            SwaggerGen.IgnoreRouteQueryParameters = true;
+            RouteTable.Routes.MapHttpRoute(
+                name: "SwaggerApiBase",
+                routeTemplate: "api/swagger",
+                defaults: new { Controller = "Swagger" }
+                );
 
             RouteTable.Routes.MapHttpRoute(
-                name: "SwaggerApi",
-                routeTemplate: "api/docs/{controller}",
-                defaults: new { swagger = true, action = "Get", Id = RouteParameter.Optional }
-            );
+                           name: "SwaggerApiTags",
+                           routeTemplate: "api/docs/tags",
+                           defaults: new { swagger = true, controller = "tags", action = "Get" }
+                           );
+
+            RouteTable.Routes.MapHttpRoute(
+                            name: "SwaggerApiUserDetails",
+                            routeTemplate: "api/docs/home",
+                            defaults: new { swagger = true, controller = "home" , action = "Get" }
+                            );
+
         }
 
         public static void PostStart()
