@@ -64,6 +64,8 @@ namespace Swagger.Net
             return "No Documentation Found.";
         }
 
+       
+
         public virtual bool GetRequired(HttpParameterDescriptor parameterDescriptor)
         {
             ReflectedHttpParameterDescriptor reflectedParameterDescriptor = parameterDescriptor as ReflectedHttpParameterDescriptor;
@@ -75,6 +77,17 @@ namespace Swagger.Net
             return true;
         }
 
+        public string GetResponseDocumentation(HttpActionDescriptor actionDescriptor)
+        {
+            return null;
+        }
+
+        public string GetDocumentation(HttpControllerDescriptor controllerDescriptor)
+        {
+            return null;
+        }
+
+        [Obsolete("For web api 1")]
         public virtual string GetDocumentation(HttpActionDescriptor actionDescriptor)
         {
             XPathNavigator memberNode = GetMemberNode(actionDescriptor);

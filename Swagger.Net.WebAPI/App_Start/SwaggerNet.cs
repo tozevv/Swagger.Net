@@ -19,15 +19,11 @@ namespace Swagger.Net.WebApi.App_Start
         {
             SwaggerGen.LowercaseRoutes = true;
 
-            
-
             RouteTable.Routes.MapHttpRoute(
                 name: "SwaggerApi",
                 routeTemplate: "api/docs/{controller}",
                 defaults: new { swagger = true, action = "Get", Id = RouteParameter.Optional }
             );
-
-
         }
 
         public static void PostStart()

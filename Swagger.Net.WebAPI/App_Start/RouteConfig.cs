@@ -12,8 +12,6 @@ namespace Swagger.Net.WebApi
     {
         public static void RegisterRoutes(HttpRouteCollection routes)
         {
-            
-
             routes.MapHttpRoute(
                 "Default",
                 "{controller}/{action}/{id}",

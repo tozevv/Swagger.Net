@@ -43,10 +43,8 @@ namespace Swagger.Net.WebApi
                 string apiKey = GetApiKey(actionContext);
                 return apiKey == "admin-key";
             }
-            else
-            {
-                return false;
-            }
+           
+            return false;
         }
     }
 
