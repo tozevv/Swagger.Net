@@ -295,7 +295,7 @@ function program8(depth0,data) {
   buffer += "<div class='info' id='api_info'>\r\n  ";
   stack1 = helpers['if'].call(depth0, depth0.info, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n</div>\r\n<div class='container' id='resources_container'>\r\n    <div class=\"devices\">\r\n        <div class=\"center\">\r\n            <span>Set device:&nbsp;</span>\r\n            <select id=\"deviceList\">   \r\n                <option val=\"Web\">Web</option>\r\n                <option val=\"YouView\">YouView</option>\r\n                <option val=\"Roku\">Roku</option>\r\n            </select>\r\n            <input type=\"text\" id=\"deviceId\" placeholder=\"id\" />\r\n\r\n            <input type=\"text\" id=\"deviceModel\" placeholder=\"model\" />\r\n\r\n            <input type=\"text\" id=\"deviceManufacturer\" placeholder=\"manufacturer\" />\r\n        </div>\r\n    </div>\r\n    <ul id='resources'>\r\n    </ul>\r\n\r\n    <div class=\"footer\">\r\n        <br>\r\n        <br>\r\n        <h4 style=\"color: #999\">[ <span style=\"font-variant: small-caps\">base url</span>: ";
+  buffer += "\r\n</div>\r\n<div class='container' id='resources_container'>\r\n    <ul id='resources'>\r\n    </ul>\r\n\r\n    <div class=\"footer\">\r\n        <br>\r\n        <br>\r\n        <h4 style=\"color: #999\">[ <span style=\"font-variant: small-caps\">base url</span>: ";
   if (stack1 = helpers.basePath) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.basePath; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
@@ -317,45 +317,45 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1;
-  buffer += "\n        <h4>Implementation Notes</h4>\n        <p>";
+  buffer += "\r\n        <h4>Implementation Notes</h4>\r\n        <p>";
   if (stack1 = helpers.notes) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.notes; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "</p>\n        ";
+  buffer += "</p>\r\n        ";
   return buffer;
   }
 
 function program3(depth0,data) {
   
   
-  return "\n          <h4>Response Class</h4>\n          <p><span class=\"model-signature\" /></p>\n          <br/>\n          <div class=\"response-content-type\" />\n\n        ";
+  return "\r\n          <h4>Response Class</h4>\r\n          <p><span class=\"model-signature\" /></p>\r\n          <br/>\r\n          <div class=\"response-content-type\" />\r\n        ";
   }
 
 function program5(depth0,data) {
   
   
-  return "\n          <h4>Parameters</h4>\n          <table class='fullwidth'>\n          <thead>\n            <tr>\n            <th style=\"width: 100px; max-width: 100px\">Parameter</th>\n            <th style=\"width: 310px; max-width: 310px\">Value</th>\n            <th style=\"width: 200px; max-width: 200px\">Description</th>\n            <th style=\"width: 100px; max-width: 100px\">Parameter Type</th>\n            <th style=\"width: 220px; max-width: 230px\">Data Type</th>\n            </tr>\n          </thead>\n          <tbody class=\"operation-params\">\n\n          </tbody>\n          </table>\n          ";
+  return "\r\n          <h4>Parameters</h4>\r\n          <table class='fullwidth'>\r\n          <thead>\r\n            <tr>\r\n            <th style=\"width: 100px; max-width: 100px\">Parameter</th>\r\n            <th style=\"width: 310px; max-width: 310px\">Value</th>\r\n            <th style=\"width: 200px; max-width: 200px\">Description</th>\r\n            <th style=\"width: 100px; max-width: 100px\">Parameter Type</th>\r\n            <th style=\"width: 220px; max-width: 230px\">Data Type</th>\r\n            </tr>\r\n          </thead>\r\n          <tbody class=\"operation-params\">\r\n\r\n          </tbody>\r\n          </table>\r\n          ";
   }
 
 function program7(depth0,data) {
   
   
-  return "\n          <div style='margin:0;padding:0;display:inline'></div>\n          <h4>Error Status Codes</h4>\n          <table class='fullwidth'>\n            <thead>\n            <tr>\n              <th>HTTP Status Code</th>\n              <th>Reason</th>\n            </tr>\n            </thead>\n            <tbody class=\"operation-status\">\n            \n            </tbody>\n          </table>\n          ";
+  return "\r\n          <div style='margin:0;padding:0;display:inline'></div>\r\n          <h4>Error Status Codes</h4>\r\n          <table class='fullwidth'>\r\n            <thead>\r\n            <tr>\r\n              <th>HTTP Status Code</th>\r\n              <th>Reason</th>\r\n            </tr>\r\n            </thead>\r\n            <tbody class=\"operation-status\">\r\n            \r\n            </tbody>\r\n          </table>\r\n          ";
   }
 
 function program9(depth0,data) {
   
   
-  return "\n          ";
+  return "\r\n          ";
   }
 
 function program11(depth0,data) {
   
   
-  return "\n          <div class='sandbox_header'>\n            <input class='submit' name='commit' type='button' value='Try it out!' />\n            <a href='#' class='response_hider' style='display:none'>Hide Response</a>\n            <img alt='Throbber' class='response_throbber' src='images/throbber.gif' style='display:none' />\n          </div>\n          ";
+  return "\r\n          <div class='sandbox_header'>\r\n            <input class='submit' name='commit' type='button' value='Try it out!' />\r\n            <a href='#' class='response_hider' style='display:none'>Hide Response</a>\r\n            <img alt='Throbber' class='response_throbber' src='images/throbber.gif' style='display:none' />\r\n          </div>\r\n          ";
   }
 
-  buffer += "\n  <ul class='operations' >\n    <li class='";
+  buffer += "\r\n  <ul class='operations' >\r\n    <li class='";
   if (stack1 = helpers.method) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.method; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
@@ -375,7 +375,7 @@ function program11(depth0,data) {
   if (stack1 = helpers.number) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.number; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "'>\n      <div class='heading'>\n        <h3>\n          <span class='http_method'>\n          <a href='#!/";
+    + "'>\r\n      <div class='heading'>\r\n        <h3>\r\n          <span class='http_method'>\r\n          <a href='#!/";
   if (stack1 = helpers.resourceName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.resourceName; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
@@ -395,7 +395,7 @@ function program11(depth0,data) {
   if (stack1 = helpers.method) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.method; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "</a>\n          </span>\n          <span class='path'>\n          <a href='#!/";
+    + "</a>\r\n          </span>\r\n          <span class='path'>\r\n          <a href='#!/";
   if (stack1 = helpers.resourceName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.resourceName; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
@@ -415,7 +415,7 @@ function program11(depth0,data) {
   if (stack1 = helpers.path) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.path; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "</a>\n          </span>\n        </h3>\n        <ul class='options'>\n          <li>\n          <a href='#!/";
+    + "</a>\r\n          </span>\r\n        </h3>\r\n        <ul class='options'>\r\n          <li>\r\n          <a href='#!/";
   if (stack1 = helpers.resourceName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.resourceName; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
@@ -435,7 +435,7 @@ function program11(depth0,data) {
   if (stack1 = helpers.summary) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.summary; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "</a>\n          </li>\n        </ul>\n      </div>\n      <div class='content' id='";
+  buffer += "</a>\r\n          </li>\r\n        </ul>\r\n      </div>\r\n      <div class='content' id='";
   if (stack1 = helpers.resourceName) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.resourceName; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
@@ -451,22 +451,22 @@ function program11(depth0,data) {
   if (stack1 = helpers.number) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
   else { stack1 = depth0.number; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   buffer += escapeExpression(stack1)
-    + "_content' style='display:none'>\n       \n        ";
+    + "_content' style='display:none'>\r\n        ";
   stack1 = helpers['if'].call(depth0, depth0.notes, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        ";
+  buffer += "\r\n        ";
   stack1 = helpers['if'].call(depth0, depth0.type, {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        <form accept-charset='UTF-8' class='sandbox'>\n          <div style='margin:0;padding:0;display:inline'></div>\n          ";
+  buffer += "\r\n        <form accept-charset='UTF-8' class='sandbox'>\r\n          <div style='margin:0;padding:0;display:inline'></div>\r\n          ";
   stack1 = helpers['if'].call(depth0, depth0.parameters, {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n           <h4>Mock profile</h4>\n          <input name=\"mockprofile\" type=\"text\" placeholder=\"mock profile\" />\n          ";
+  buffer += "\r\n          ";
   stack1 = helpers['if'].call(depth0, depth0.responseMessages, {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n          ";
+  buffer += "\r\n          ";
   stack1 = helpers['if'].call(depth0, depth0.isReadOnly, {hash:{},inverse:self.program(11, program11, data),fn:self.program(9, program9, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n        </form>\n        <div class='response' style='display:none'>\n          <h4>Request URL</h4>\n          <div class='block request_url'></div>\n          <h4>Response Body</h4>\n          <div class='block response_body'></div>\n          <h4>Response Code</h4>\n          <div class='block response_code'></div>\n          <h4>Response Headers</h4>\n          <div class='block response_headers'></div>\n        </div>\n      </div>\n    </li>\n  </ul>\n";
+  buffer += "\r\n        </form>\r\n        <div class='response' style='display:none'>\r\n          <h4>Request URL</h4>\r\n          <div class='block request_url'></div>\r\n          <h4>Response Body</h4>\r\n          <div class='block response_body'></div>\r\n          <h4>Response Code</h4>\r\n          <div class='block response_code'></div>\r\n          <h4>Response Headers</h4>\r\n          <div class='block response_headers'></div>\r\n        </div>\r\n      </div>\r\n    </li>\r\n  </ul>\r\n";
   return buffer;
   });
 })();
@@ -1075,7 +1075,7 @@ function program2(depth0,data) {
 function program4(depth0,data) {
   
   
-  return "\r\n  <option value=\"application/json\">application/json</option>\r\n  <option value=\"text/xml\">text/xml</option>\r\n  <option value=\"text/javascript\">jsonp</option>\r\n";
+  return "\r\n  <option value=\"application/json\">application/json</option>\r\n";
   }
 
   buffer += "<label for=\"responseContentType\"></label>\r\n<select name=\"responseContentType\">\r\n";
@@ -1153,21 +1153,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     SwaggerUi.prototype.headerView = null;
 
     SwaggerUi.prototype.mainView = null;
-
-    SwaggerUi.prototype.devices = {
-      Web: {
-        model: "",
-        manufacturer: ""
-      },
-      YouView: {
-        model: "YouView",
-        manufacturer: "YouView"
-      },
-      Roku: {
-        model: "Roku",
-        manufacturer: "Roku"
-      }
-    };
 
     SwaggerUi.prototype.initialize = function(options) {
       var _this = this;
@@ -1340,25 +1325,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       return _ref2;
     }
 
-    MainView.prototype.events = {
-      'change #deviceList': 'changeDevice'
-    };
-
-    MainView.prototype.devices = {
-      Web: {
-        model: "",
-        manufacturer: ""
-      },
-      YouView: {
-        model: "YouView",
-        manufacturer: "YouView"
-      },
-      Roku: {
-        model: "Roku",
-        manufacturer: "Roku"
-      }
-    };
-
     MainView.prototype.initialize = function() {};
 
     MainView.prototype.render = function() {
@@ -1385,15 +1351,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     MainView.prototype.clear = function() {
       return $(this.el).html('');
-    };
-
-    MainView.prototype.changeDevice = function(e) {
-      var device;
-      device = e.target.value;
-      device = this.devices[device];
-      console.log(device);
-      $("#deviceModel").val(device.model);
-      return $("#deviceManufacturer").val(device.manufacturer);
     };
 
     return MainView;
@@ -1685,7 +1642,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     };
 
     OperationView.prototype.showStatus = function(data) {
-      var code, content, contentType, error, headers, pre, response_body;
+      var code, content, contentType, headers, pre, response_body;
       content = data.content.data;
       headers = data.getHeaders();
       contentType = headers["Content-Type"];
@@ -1693,14 +1650,8 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         code = $('<code />').text("no content");
         pre = $('<pre class="json" />').append(code);
       } else if (contentType.indexOf("application/json") === 0) {
-        try {
-          code = $('<code />').text(JSON.stringify(JSON.parse(content), null, 2));
-          pre = $('<pre class="json" />').append(code);
-        } catch (_error) {
-          error = _error;
-          code = $('<code />').text(this.formatXml(content));
-          pre = $('<pre class="xml" />').append(code);
-        }
+        code = $('<code />').text(JSON.stringify(JSON.parse(content), null, 2));
+        pre = $('<pre class="json" />').append(code);
       } else if (contentType.indexOf("application/xml") === 0) {
         code = $('<code />').text(this.formatXml(content));
         pre = $('<pre class="xml" />').append(code);
@@ -1712,15 +1663,14 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         pre = $('<pre class="json" />').append(code);
       }
       response_body = pre;
-      $(".request_url", $(this.el)).html("<pre><a href='" + data.request.url + "' target='_blank'>" + data.request.url + "</a></pre>");
+      $(".request_url").html("<pre>" + data.request.url + "</pre>");
       $(".response_code", $(this.el)).html("<pre>" + data.status + "</pre>");
       $(".response_body", $(this.el)).html(response_body);
       $(".response_headers", $(this.el)).html("<pre>" + JSON.stringify(data.getHeaders()) + "</pre>");
       $(".response", $(this.el)).slideDown();
       $(".response_hider", $(this.el)).show();
       $(".response_throbber", $(this.el)).hide();
-      hljs.highlightBlock($('.response_body', $(this.el))[0]);
-      return sky.extensions.addAnchors($('.response_body', $(this.el)).find("pre"));
+      return hljs.highlightBlock($('.response_body', $(this.el))[0]);
     };
 
     OperationView.prototype.toggleOperationContent = function() {
@@ -1863,7 +1813,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       var template;
       template = this.template();
       $(this.el).html(template(this.model));
-      this.switchToDescription();
+      this.switchToSnippet();
       this.isParam = this.model.isParam;
       if (this.isParam) {
         $('.notice', $(this.el)).text('Click to set as parameter value');
