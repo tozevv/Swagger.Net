@@ -2,6 +2,7 @@ Original project, copyright and all rightfull credits in https://github.com/mike
 
 Fork of Swagger.Net to include some simple new features:
 
+- Support for WebApi 2.1
 - Support for Models. Swagger will now output a tabbed structure of the response object. Which level is minimized and can be expanded by clicking +
 - Support for response codes. Adding this to the action comments will show the response codes for each action. Ex.
         /// &lt;responseCodes&gt;
