@@ -9,11 +9,19 @@ namespace Swagger.Net.WebApi
     {
         public static void Register(HttpConfiguration config)
         {
+
             config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
+               name: "SwaggerFile",
+               routeTemplate: "home/swaggerfile",
+               defaults: new { controller = "Home", action = "swaggerfile" }
+           );
+
+            config.Routes.MapHttpRoute(
+                name: "ApiRoutes",
+                routeTemplate: "api/{controller}/{action}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
         }
     }
 }

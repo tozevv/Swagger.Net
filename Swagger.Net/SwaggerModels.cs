@@ -1,10 +1,17 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
+using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 
 namespace Swagger.Net
 {
@@ -21,6 +28,7 @@ namespace Swagger.Net
         /// </summary>
         public static bool IgnoreRouteQueryParameters { get; set; }
 
+        public static JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings(){PreserveReferencesHandling = PreserveReferencesHandling.Objects};
         public const string SWAGGER = "swagger";
         public const string SWAGGER_VERSION = "2.0";
         public const string FROMURI = "FromUri";
@@ -29,7 +37,9 @@ namespace Swagger.Net
         public const string PATH = "path";
         public const string BODY = "body";
 
-        public static string CreatePath(string path) 
+        private static readonly ConcurrentDictionary<string, TypeInfo> models = new ConcurrentDictionary<string, TypeInfo>();
+
+        public static string CreatePath(string path)
         {
             if (path != null)
             {
@@ -45,6 +55,7 @@ namespace Swagger.Net
             }
             return path;
         }
+
 
         /// <summary>
         /// Create a resource listing
@@ -72,13 +83,14 @@ namespace Swagger.Net
                 apiVersion = Assembly.GetCallingAssembly().GetType().Assembly.GetName().Version.ToString(),
                 swaggerVersion = SWAGGER_VERSION,
                 basePath = uri.GetLeftPart(UriPartial.Authority) + HttpRuntime.AppDomainAppVirtualPath.TrimEnd('/'),
-                apis = new List<ResourceApi>()
+                apis = new List<ResourceApi>(),
+                models = models,
+                apiSources = Helper.GetApiSources(controllerContext)
+
             };
 
-            if (includeResourcePath)
-            {
-                rl.resourcePath = CreatePath(controllerContext.ControllerDescriptor.ControllerName);
-            }
+            if (includeResourcePath) rl.resourcePath = controllerContext.ControllerDescriptor.ControllerName;
+
             return rl;
         }
 
@@ -98,8 +110,6 @@ namespace Swagger.Net
 
             rApi.path = CreatePath(rApi.path);
             return rApi;
-
-          
         }
 
         /// <summary>
@@ -110,16 +120,24 @@ namespace Swagger.Net
         /// <returns>An api operation</returns>
         public static ResourceApiOperation CreateResourceApiOperation(ApiDescription api, XmlCommentDocumentationProvider docProvider)
         {
-            ResourceApiOperation rApiOperation = new ResourceApiOperation()
+            ResponseMeta responseMeta = docProvider.GetResponseType(api.ActionDescriptor);
+            SwaggerType swaggerType = Helper.GetSwaggerType(responseMeta.Type);
+
+
+            ResourceApiOperation rApiOperation = new ResourceApiOperation
             {
                 httpMethod = api.HttpMethod.ToString(),
                 nickname = docProvider.GetNickname(api.ActionDescriptor),
-                responseClass = docProvider.GetResponseClass(api.ActionDescriptor),
+                items = swaggerType.Items,
+                type = swaggerType.Name,
                 summary = api.Documentation,
                 notes = docProvider.GetNotes(api.ActionDescriptor),
-                parameters = new List<ResourceApiOperationParameter>()
+                parameters = new List<ResourceApiOperationParameter>(),
+                responseMessages = docProvider.GetResponseCodes(api.ActionDescriptor)
             };
 
+            var typesToReturn = new ConcurrentDictionary<string, string>();
+            Helper.TryToAddModels(models, responseMeta.Type, docProvider, typesToReturn);
             return rApiOperation;
         }
 
@@ -139,54 +157,15 @@ namespace Swagger.Net
                 name = param.Name,
                 description = param.Documentation,
                 dataType = param.ParameterDescriptor.ParameterType.Name,
-                required = docProvider.GetRequired(param.ParameterDescriptor)
+                required = docProvider.GetRequired(param.ParameterDescriptor),
+                @enum = docProvider.GetPossibleValues(param.ParameterDescriptor),
+                defaultValue = docProvider.GetDefaultParameterValue(param.ParameterDescriptor)
             };
 
             return parameter;
         }
     }
 
-    public class ResourceListing
-    {
-        public string apiVersion { get; set; }
-        public string swaggerVersion { get; set; }
-        public string basePath { get; set; }
-        public string resourcePath { get; set; }
-        public List<ResourceApi> apis { get; set; }
-    }
 
-    public class ResourceApi
-    {
-        public string path { get; set; }
-        public string description { get; set; }
-        public List<ResourceApiOperation> operations { get; set; }
-    }
 
-    public class ResourceApiOperation
-    {
-        public string httpMethod { get; set; }
-        public string nickname { get; set; }
-        public string responseClass { get; set; }
-        public string summary { get; set; }
-        public string notes { get; set; }
-        public List<ResourceApiOperationParameter> parameters { get; set; }
-    }
-
-    public class ResourceApiOperationParameter
-    {
-        public string paramType { get; set; }
-        public string name { get; set; }
-        public string description { get; set; }
-        public string dataType { get; set; }
-        public bool required { get; set; }
-        public bool allowMultiple { get; set; }
-        public OperationParameterAllowableValues allowableValues { get; set; }
-    }
-
-    public class OperationParameterAllowableValues
-    {
-        public int max { get; set; }
-        public int min { get; set; }
-        public string valueType { get; set; }
-    }
 }

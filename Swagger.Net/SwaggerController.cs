@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Web;
@@ -22,7 +23,7 @@ namespace Swagger.Net
             ResourceListing r = SwaggerGen.CreateResourceListing(ControllerContext);
             List<string> uniqueControllers = new List<string>();
 
-            foreach (var api in GlobalConfiguration.Configuration.Services.GetApiExplorer().ApiDescriptions)
+            foreach (var api in GlobalConfiguration.Configuration.Services.GetApiExplorer().ApiDescriptions.Where(api=>api.Route.RouteTemplate.Contains("api")))
             {
                 string controllerName = api.ActionDescriptor.ControllerDescriptor.ControllerName;
                 if (uniqueControllers.Contains(controllerName) ||
