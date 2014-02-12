@@ -14,5 +14,5 @@ Fork of Swagger.Net to include some simple new features:
 - Api Sources. It's now possible to have static documentation for the api in the docs/apiSources folder. The files in the folder contain the same structure as the JSON returned from the API but since they're static it allows to setup alternate routes.
 - Enum parameters will render as dropdown list
 - Support for jsonp response
-- Parameter defaults. Will set a default value in the parameter text field &amp;lt;param name=&quot;id&quot; default=&quot;12312312&quot;&amp;gt;The id.&amp;lt;/param&amp;lt;
+- Parameter defaults. Will set a default value in the parameter text field &lt;param name=&quot;id&quot; default=&quot;12312312&quot;&gt;The id.&lt;/param&gt;
 - &lt;overrideReturn type=&quot;Fully qualified type&quot;&gt; Will override the response type with the type provided. If the type is part of another dll, there needs to be the XML file for that assembly 
